@@ -14,7 +14,6 @@
 
 @interface HomeTimelineTableViewController ()
 @property (strong, nonatomic) NSArray *tweets; // Array of Tweet Dictionaries
-
 @end
 
 @implementation HomeTimelineTableViewController
@@ -37,7 +36,7 @@
         });
     }];
     
-#warning IOS 8.0 feature -- Untested on 7.0
+    #warning IOS 8.0 feature -- Untested on 7.0
     self.tableView.estimatedRowHeight = 120;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     
@@ -128,11 +127,10 @@
     tweetCell.tweetLabel.numberOfLines = 0;
     
     
-#warning Check for performance issues
+    #warning Check for performance issues
     tweetCell.tweetLabel.layer.masksToBounds = YES;
     tweetCell.tweetLabel.layer.cornerRadius = 8.0;
         
-    //tweetCell.profileImage.image = image;
 }
 
 
@@ -144,8 +142,7 @@
 
 
 /*
- - (CGFloat)tableView:(UITableView *)tableView
- heightForRowAtIndexPath:(NSIndexPath *)indexPath
+ - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
  {
  
  [self configureCell:self.protoCell forRowAtIndexPath:indexPath];
