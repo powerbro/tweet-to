@@ -14,6 +14,16 @@
     // Initialization code
 }
 
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    [self.contentView setNeedsLayout];
+    [self.contentView layoutIfNeeded];
+    
+}
+
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
 

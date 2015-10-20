@@ -10,4 +10,11 @@
 
 @interface TweetJsonParams : NSObject
 
+#define CREATED_AT  @"created_at"
+#define ID          @"id_str"
+#define TEXT        @"text"
+#define NAME        @"user.name"
+#define USERNAME    @"user.screen_name"
+#define IMAGE_URL   @"user.profile_image_url_https"
+
 @end

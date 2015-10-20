@@ -10,4 +10,9 @@
 
 @interface Authorization : NSObject
 
+#pragma Authorization: OAuth parameters
+
+- (NSString *)getAuthorizationHeader;
+
+
 @end
