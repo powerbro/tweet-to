@@ -1,4 +1,4 @@
-//
+ //
 //  HomeTimelineTableViewController.h
 //  Tweet-to
 //
@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "GenericTweetTableViewController.h"
 
-@interface HomeTimelineTableViewController : UITableViewController
+@interface HomeTimelineTableViewController : GenericTweetTableViewController
 
 @end
