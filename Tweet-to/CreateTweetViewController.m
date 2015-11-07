@@ -70,7 +70,6 @@
 - (void)textViewDidChange:(UITextView *)textView
 {
     self.characterLimit.text = [@(MAX_CHARACTER_LIMIT - [textView.text length]) stringValue];
-
 }
 
 - (BOOL) textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text

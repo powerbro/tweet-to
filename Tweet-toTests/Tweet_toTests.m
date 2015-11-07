@@ -7,6 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "Authorization.h"
 
 @interface Tweet_toTests : XCTestCase
 
@@ -24,10 +25,36 @@
     [super tearDown];
 }
 
-- (void)testExample {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
-}
+//- (void)testExample {
+//    // This is an example of a functional test case.
+//    // Use XCTAssert and related functions to verify your tests produce the correct results.
+//    
+//    NSString *url = @"https://api.twitter.com/1/statuses/update.json";
+//    NSString *httpMethod = @"POST";
+//    NSDictionary *params = @{@"status" : @"Hello Ladies + Gentlemen, a signed OAuth request!", @"include_entities": @"true"};
+//    
+//    Authorization *authorize = [[Authorization alloc] initWithURL:url httpMethod:httpMethod parameters:params];
+//    NSString *oauthSign = [authorize oauthSignature];
+//    XCTAssertEqualObjects(oauthSign, @"tnnArxj06cWHq44gCs1OSKk/jLY=");
+//    
+//    NSString *oauthHeader = [authorize getAuthorizationHeader];
+//    NSLog(@"%@", oauthHeader);
+//
+//}
+
+//- (void)testAnother {
+//    
+//    
+//    NSString *url = @"https://api.twitter.com/1/statuses/update.json";
+//    NSString *httpMethod = @"POST";
+//    NSDictionary *params = @{@"status" : @"Hello Ladies + Gentlemen, a signed OAuth request!", @"include_entities": @"true"};
+//    
+//    Authorization *authorize = [[Authorization alloc] initWithURL:url httpMethod:httpMethod parameters:params];
+//    NSString *oauthRandom = [authorize oauthNonce];
+//    NSString *oauthTime = [authorize oauthTimestamp];
+//    
+//    NSLog(@"%@  %@", oauthRandom, oauthTime);
+//}
 
 - (void)testPerformanceExample {
     // This is an example of a performance test case.
@@ -35,5 +62,6 @@
         // Put the code you want to measure the time of here.
     }];
 }
+
 
 @end

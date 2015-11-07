@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1E0551D81BC7BC000024403B /* Authorization.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E0551D71BC7BC000024403B /* Authorization.m */; settings = {ASSET_TAGS = (); }; };
-		1E0551DB1BCBE3EB0024403B /* HomeTimelineTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E0551DA1BCBE3EB0024403B /* HomeTimelineTableViewController.m */; settings = {ASSET_TAGS = (); }; };
+		1E0551D81BC7BC000024403B /* Authorization.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E0551D71BC7BC000024403B /* Authorization.m */; };
+		1E0551DB1BCBE3EB0024403B /* HomeTimelineTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E0551DA1BCBE3EB0024403B /* HomeTimelineTableViewController.m */; };
 		1E3E6DB51BC40A8D00A98CCC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E3E6DB41BC40A8D00A98CCC /* main.m */; };
 		1E3E6DB81BC40A8D00A98CCC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E3E6DB71BC40A8D00A98CCC /* AppDelegate.m */; };
 		1E3E6DBE1BC40A8D00A98CCC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1E3E6DBC1BC40A8D00A98CCC /* Main.storyboard */; };
@@ -17,18 +17,20 @@
 		1E3E6DC61BC40A8D00A98CCC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1E3E6DC41BC40A8D00A98CCC /* LaunchScreen.storyboard */; };
 		1E3E6DD11BC40A8D00A98CCC /* Tweet_toTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E3E6DD01BC40A8D00A98CCC /* Tweet_toTests.m */; };
 		1E3E6DDC1BC40A8D00A98CCC /* Tweet_toUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E3E6DDB1BC40A8D00A98CCC /* Tweet_toUITests.m */; };
-		1E3E6E1C1BC54AEA00A98CCC /* TwitterFeed.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E3E6E1B1BC54AEA00A98CCC /* TwitterFeed.m */; settings = {ASSET_TAGS = (); }; };
-		1E5572F61BD3127900129DB8 /* NavigationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E5572F51BD3127900129DB8 /* NavigationViewController.m */; settings = {ASSET_TAGS = (); }; };
-		1E5572F91BD6822500129DB8 /* CreateTweetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E5572F81BD6822500129DB8 /* CreateTweetViewController.m */; settings = {ASSET_TAGS = (); }; };
-		1E5573011BD8E69400129DB8 /* tweetbutton.png in Resources */ = {isa = PBXBuildFile; fileRef = 1E5573001BD8E69400129DB8 /* tweetbutton.png */; settings = {ASSET_TAGS = (); }; };
-		1E5573031BD8EAE500129DB8 /* tweet.png in Resources */ = {isa = PBXBuildFile; fileRef = 1E5573021BD8EAE500129DB8 /* tweet.png */; settings = {ASSET_TAGS = (); }; };
-		1E5573081BDA51D200129DB8 /* UserTimelineTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E5573071BDA51D200129DB8 /* UserTimelineTableViewController.m */; settings = {ASSET_TAGS = (); }; };
-		1E55730F1BDE633B00129DB8 /* ImageDownload.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E55730E1BDE633B00129DB8 /* ImageDownload.m */; settings = {ASSET_TAGS = (); }; };
-		1E5573111BDE74E500129DB8 /* twitter-background.png in Resources */ = {isa = PBXBuildFile; fileRef = 1E5573101BDE74E500129DB8 /* twitter-background.png */; settings = {ASSET_TAGS = (); }; };
-		1E773AC41BDF7562007A2C75 /* GenericTweetTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E773AC31BDF7562007A2C75 /* GenericTweetTableViewController.m */; settings = {ASSET_TAGS = (); }; };
-		1E773AC81BDF9C89007A2C75 /* MyTweetsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E773AC71BDF9C89007A2C75 /* MyTweetsTableViewController.m */; settings = {ASSET_TAGS = (); }; };
-		1E773ACC1BDFA7AB007A2C75 /* twitter-about.png in Resources */ = {isa = PBXBuildFile; fileRef = 1E773ACB1BDFA7AB007A2C75 /* twitter-about.png */; settings = {ASSET_TAGS = (); }; };
-		1EFDD7EC1BCFB6D8004849A1 /* TweetTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EFDD7EB1BCFB6D8004849A1 /* TweetTableViewCell.m */; settings = {ASSET_TAGS = (); }; };
+		1E3E6E1C1BC54AEA00A98CCC /* TwitterFeed.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E3E6E1B1BC54AEA00A98CCC /* TwitterFeed.m */; };
+		1E4849071BE8D9CD00E7A3DA /* OauthSLFramework.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E4849061BE8D9CD00E7A3DA /* OauthSLFramework.m */; };
+		1E48490B1BECCBB500E7A3DA /* FollowerTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E48490A1BECCBB500E7A3DA /* FollowerTableViewController.m */; };
+		1E5572F61BD3127900129DB8 /* NavigationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E5572F51BD3127900129DB8 /* NavigationViewController.m */; };
+		1E5572F91BD6822500129DB8 /* CreateTweetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E5572F81BD6822500129DB8 /* CreateTweetViewController.m */; };
+		1E5573011BD8E69400129DB8 /* tweetbutton.png in Resources */ = {isa = PBXBuildFile; fileRef = 1E5573001BD8E69400129DB8 /* tweetbutton.png */; };
+		1E5573031BD8EAE500129DB8 /* tweet.png in Resources */ = {isa = PBXBuildFile; fileRef = 1E5573021BD8EAE500129DB8 /* tweet.png */; };
+		1E5573081BDA51D200129DB8 /* UserTimelineTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E5573071BDA51D200129DB8 /* UserTimelineTableViewController.m */; };
+		1E55730F1BDE633B00129DB8 /* ImageDownload.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E55730E1BDE633B00129DB8 /* ImageDownload.m */; };
+		1E5573111BDE74E500129DB8 /* twitter-background.png in Resources */ = {isa = PBXBuildFile; fileRef = 1E5573101BDE74E500129DB8 /* twitter-background.png */; };
+		1E773AC41BDF7562007A2C75 /* GenericTweetTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E773AC31BDF7562007A2C75 /* GenericTweetTableViewController.m */; };
+		1E773AC81BDF9C89007A2C75 /* MyTweetsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E773AC71BDF9C89007A2C75 /* MyTweetsTableViewController.m */; };
+		1E773ACC1BDFA7AB007A2C75 /* twitter-about.png in Resources */ = {isa = PBXBuildFile; fileRef = 1E773ACB1BDFA7AB007A2C75 /* twitter-about.png */; };
+		1EFDD7EC1BCFB6D8004849A1 /* TweetTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EFDD7EB1BCFB6D8004849A1 /* TweetTableViewCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +72,12 @@
 		1E3E6DDD1BC40A8D00A98CCC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1E3E6E1A1BC54AEA00A98CCC /* TwitterFeed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TwitterFeed.h; path = "Tweet-to/TwitterFeed.h"; sourceTree = "<group>"; usesTabs = 1; };
 		1E3E6E1B1BC54AEA00A98CCC /* TwitterFeed.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TwitterFeed.m; path = "Tweet-to/TwitterFeed.m"; sourceTree = "<group>"; };
+		1E4849041BE8D98F00E7A3DA /* ConsumerTokens.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ConsumerTokens.h; path = "Tweet-to/ConsumerTokens.h"; sourceTree = "<group>"; };
+		1E4849051BE8D9CD00E7A3DA /* OauthSLFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OauthSLFramework.h; path = "Tweet-to/OauthSLFramework.h"; sourceTree = "<group>"; };
+		1E4849061BE8D9CD00E7A3DA /* OauthSLFramework.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OauthSLFramework.m; path = "Tweet-to/OauthSLFramework.m"; sourceTree = "<group>"; };
+		1E4849091BECCBB500E7A3DA /* FollowerTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FollowerTableViewController.h; sourceTree = "<group>"; };
+		1E48490A1BECCBB500E7A3DA /* FollowerTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FollowerTableViewController.m; sourceTree = "<group>"; };
+		1E48490E1BECFD6100E7A3DA /* FollowingJsonParams.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FollowingJsonParams.h; path = "Tweet-to/FollowingJsonParams.h"; sourceTree = "<group>"; };
 		1E5572F41BD3127900129DB8 /* NavigationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationViewController.h; sourceTree = "<group>"; };
 		1E5572F51BD3127900129DB8 /* NavigationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavigationViewController.m; sourceTree = "<group>"; };
 		1E5572F71BD6822500129DB8 /* CreateTweetViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateTweetViewController.h; sourceTree = "<group>"; };
@@ -189,10 +197,12 @@
 			children = (
 				1EFDD7E41BCD3BFE004849A1 /* TweetJsonParams.h */,
 				1E55730B1BDE43AA00129DB8 /* UserJsonParams.h */,
+				1E48490E1BECFD6100E7A3DA /* FollowingJsonParams.h */,
+				1E4849041BE8D98F00E7A3DA /* ConsumerTokens.h */,
 				1E3E6E1A1BC54AEA00A98CCC /* TwitterFeed.h */,
 				1E3E6E1B1BC54AEA00A98CCC /* TwitterFeed.m */,
-				1E0551D61BC7BC000024403B /* Authorization.h */,
-				1E0551D71BC7BC000024403B /* Authorization.m */,
+				1E48490D1BECF6AC00E7A3DA /* Entities */,
+				1E48490C1BECF69A00E7A3DA /* Authentication */,
 			);
 			name = Model;
 			path = ..;
@@ -201,9 +211,12 @@
 		1E3E6E191BC5378000A98CCC /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				1EFDD7EA1BCFB6D8004849A1 /* TweetTableViewCell.h */,
+				1EFDD7EB1BCFB6D8004849A1 /* TweetTableViewCell.m */,
 				1E773AC21BDF7562007A2C75 /* GenericTweetTableViewController.h */,
 				1E773AC31BDF7562007A2C75 /* GenericTweetTableViewController.m */,
 				1E5572FA1BD6D42100129DB8 /* Home */,
+				1E4849081BECCB5C00E7A3DA /* Follow */,
 				1E5573091BDA51D700129DB8 /* User */,
 				1E55730A1BDA814B00129DB8 /* Tweet */,
 				1E55730C1BDE62F300129DB8 /* Helper Classes */,
@@ -213,11 +226,36 @@
 			name = Controller;
 			sourceTree = "<group>";
 		};
+		1E4849081BECCB5C00E7A3DA /* Follow */ = {
+			isa = PBXGroup;
+			children = (
+				1E4849091BECCBB500E7A3DA /* FollowerTableViewController.h */,
+				1E48490A1BECCBB500E7A3DA /* FollowerTableViewController.m */,
+			);
+			name = Follow;
+			sourceTree = "<group>";
+		};
+		1E48490C1BECF69A00E7A3DA /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				1E0551D61BC7BC000024403B /* Authorization.h */,
+				1E0551D71BC7BC000024403B /* Authorization.m */,
+				1E4849051BE8D9CD00E7A3DA /* OauthSLFramework.h */,
+				1E4849061BE8D9CD00E7A3DA /* OauthSLFramework.m */,
+			);
+			name = Authentication;
+			sourceTree = "<group>";
+		};
+		1E48490D1BECF6AC00E7A3DA /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Entities;
+			sourceTree = "<group>";
+		};
 		1E5572FA1BD6D42100129DB8 /* Home */ = {
 			isa = PBXGroup;
 			children = (
-				1EFDD7EA1BCFB6D8004849A1 /* TweetTableViewCell.h */,
-				1EFDD7EB1BCFB6D8004849A1 /* TweetTableViewCell.m */,
 				1E0551D91BCBE3EB0024403B /* HomeTimelineTableViewController.h */,
 				1E0551DA1BCBE3EB0024403B /* HomeTimelineTableViewController.m */,
 			);
@@ -403,7 +441,9 @@
 				1E5572F91BD6822500129DB8 /* CreateTweetViewController.m in Sources */,
 				1E3E6DC11BC40A8D00A98CCC /* Tweet_to.xcdatamodeld in Sources */,
 				1E773AC81BDF9C89007A2C75 /* MyTweetsTableViewController.m in Sources */,
+				1E4849071BE8D9CD00E7A3DA /* OauthSLFramework.m in Sources */,
 				1E3E6DB81BC40A8D00A98CCC /* AppDelegate.m in Sources */,
+				1E48490B1BECCBB500E7A3DA /* FollowerTableViewController.m in Sources */,
 				1E5572F61BD3127900129DB8 /* NavigationViewController.m in Sources */,
 				1E5573081BDA51D200129DB8 /* UserTimelineTableViewController.m in Sources */,
 				1EFDD7EC1BCFB6D8004849A1 /* TweetTableViewCell.m in Sources */,

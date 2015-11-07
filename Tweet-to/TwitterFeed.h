@@ -12,14 +12,15 @@
 
 @interface TwitterFeed : NSObject
 
-
-- (void) getUsernameFromACAccount: (void(^)(NSString *username))fetchUsername;
+- (void) getUsernameOnInitialization: (void (^) (NSString *username)) fetchUsername;
 
 - (void) getUserHomeTimelineData: (void(^)(NSArray *tweetDictionary))tweetFetcher;
 
 - (void) getUserData:(NSString *)userName withCompletionHandler:(void(^)(NSDictionary *userData))userDataFetcher;
 
 - (void) getUserTimelineData: (NSString *)userName tweetCount:(NSInteger)count withCompletionHandler:(void(^)(NSArray *tweets))tweetFetcher;
+
+- (void)getFollowersList:(NSString *)username withCompletionHandler: (void(^)(NSArray *followerList)) fetchFollowerList;
 
 - (void) postTweet:(NSString *)tweet;
 

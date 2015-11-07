@@ -24,6 +24,7 @@
 @implementation HomeTimelineTableViewController
 
 - (void)viewDidLoad {
+    
     //--------------------
     // Tweet bar button
     //--------------------
@@ -38,6 +39,7 @@
     self.navigationItem.rightBarButtonItem = tweetBarButton;
     
     [super viewDidLoad];
+    [self fetchTweets];
 }
 
 
@@ -55,7 +57,6 @@
             NSLog(@"tweets set");
         });
     }];
-
 }
 
 #pragma mark - Table view data source

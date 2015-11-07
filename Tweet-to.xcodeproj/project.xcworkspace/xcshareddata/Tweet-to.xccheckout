@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>E20C26E4-1BEA-48BB-AE90-0549A5708864</string>
+	<key>IDESourceControlProjectName</key>
+	<string>project</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>B295AB5CCD2B616FBD120FE3222CAE25BF98C02F</key>
+		<string>https://github.com/powerbro/tweet-to.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Tweet-to.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>B295AB5CCD2B616FBD120FE3222CAE25BF98C02F</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/powerbro/tweet-to.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>B295AB5CCD2B616FBD120FE3222CAE25BF98C02F</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>B295AB5CCD2B616FBD120FE3222CAE25BF98C02F</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Tweet-to</string>
+		</dict>
+	</array>
+</dict>
+</plist>

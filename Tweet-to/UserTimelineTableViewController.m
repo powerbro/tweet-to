@@ -38,6 +38,7 @@
     }];
     
     [super viewDidLoad];
+    [self fetchTweets];
 }
 
 
@@ -56,9 +57,9 @@
 {
     _userDetails = userDetails;
     
-    //----------------------
+    //-------------------------------
     // Download banner and profile image
-    //----------------------
+    //--------------------------------
     NSURL *bannerURL = [NSURL URLWithString:[_userDetails valueForKeyPath:BANNER_IMAGE_URL]];
     //NSLog(@"banner image : %@", [_userDetails valueForKeyPath:BANNER_IMAGE_URL]);
     

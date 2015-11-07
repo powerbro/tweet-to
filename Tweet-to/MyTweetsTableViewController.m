@@ -18,12 +18,22 @@
 - (void)viewDidLoad {
     // Do any additional setup after loading the view.
     
+//    TwitterFeed *twitterAPI = [[TwitterFeed alloc] init];
+//    [twitterAPI getUsernameFromACAccount:^(NSString *username) {
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            self.username = [@"@" stringByAppendingString:username];
+//            self.screenName = [@"What's up " stringByAppendingString:self.username];
+//            [super viewDidLoad];
+//        });
+//    }];
+    
     TwitterFeed *twitterAPI = [[TwitterFeed alloc] init];
-    [twitterAPI getUsernameFromACAccount:^(NSString *username) {
+    [twitterAPI getUsernameOnInitialization:^(NSString *username) {
         dispatch_async(dispatch_get_main_queue(), ^{
             self.username = [@"@" stringByAppendingString:username];
-            self.screenName = [@"What's up " stringByAppendingString:self.username];
+            self.screenName = [@"What's up " stringByAppendingString:username];
             [super viewDidLoad];
+            [self fetchTweets];
         });
     }];
 }
