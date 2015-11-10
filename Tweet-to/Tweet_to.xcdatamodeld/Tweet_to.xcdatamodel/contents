@@ -1,4 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model name="Test1.xcdatamodel" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
-    <elements/>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9057" systemVersion="14F27" minimumToolsVersion="Automatic">
+    <entity name="Tweet" representedClassName="Tweet" syncable="YES">
+        <attribute name="created_at" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="text" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="tweet_id" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="created_by" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="creates" inverseEntity="User" syncable="YES"/>
+    </entity>
+    <entity name="User" representedClassName="User" syncable="YES">
+        <attribute name="banner_image_url" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="created_at" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="image_url" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="profile_image" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="profile_image_thumbnail" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="user_id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="creates" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tweet" inverseName="created_by" inverseEntity="Tweet" syncable="YES"/>
+        <relationship name="followed_by" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="following" inverseEntity="User" syncable="YES"/>
+        <relationship name="following" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="followed_by" inverseEntity="User" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="User" positionX="-1568" positionY="-243" width="137" height="208"/>
+        <element name="Tweet" positionX="-1280" positionY="-139" width="128" height="103"/>
+    </elements>
 </model>

@@ -8,7 +8,8 @@
 
 #import "Authorization.h"
 #import "ConsumerTokens.h"
-#import "OauthSLFramework.h"
+#import "NSString+TwitterEncode.h"
+
 #import <CommonCrypto/CommonHMAC.h>
 #import <CommonCrypto/CommonDigest.h>
 
@@ -45,108 +46,67 @@
 
 @implementation Authorization
 
-//- (instancetype)init
-//{
-//    OauthSLFramework *oauthFromACAccount = [[OauthSLFramework alloc] init];
-//    [oauthFromACAccount getUserAccessTokensFromACAccount:^(NSDictionary *userAccessTokens) {
-//            self.userID = [userAccessTokens           objectForKey:@"user_id"];
-//            self.username = [userAccessTokens         objectForKey:@"screen_name"];
-//            self.oauthToken = [userAccessTokens       objectForKey:@"oauth_token"];
-//            self.oauthTokenSecret = [userAccessTokens objectForKey:@"oauth_token_secret"];
-//    }];
-//
-//    return self;
-//}
 
-- (void)initialize: (void(^)(void))onCompletion
+- (instancetype)init
 {
-    OauthSLFramework *oauthFromACAccount = [[OauthSLFramework alloc] init];
-    [oauthFromACAccount getUserAccessTokensFromACAccount:^(NSDictionary *userAccessTokens) {
-            self.userID = [userAccessTokens           objectForKey:@"user_id"];
-            self.username = [userAccessTokens         objectForKey:@"screen_name"];
-            self.oauthToken = [userAccessTokens       objectForKey:@"oauth_token"];
-            self.oauthTokenSecret = [userAccessTokens objectForKey:@"oauth_token_secret"];
-        NSLog(@"\nusername : %@", self.username);
-        NSLog(@"\nusername dict: %@", [userAccessTokens  objectForKey:@"screen_name"]);
-        onCompletion();
-    }];
+    //NSUserDefault values set at application launch time
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    self.userID = [userDefaults stringForKey:@"user_id"];
+    self.username = [userDefaults stringForKey:@"screen_name"];
+    self.oauthToken = [userDefaults stringForKey:@"oauth_token"];
+    self.oauthTokenSecret = [userDefaults stringForKey:@"oauth_token_secret"];
+
+    return self;
 }
 
 - (void)getUserDetails: (void (^)(NSString *username, NSString *userID))successBlock
 {
-    __weak typeof(self) weakSelf = self;
+    successBlock(self.username, self.userID);
+}
+
+- (void) initWithURL: (NSString *)URL httpMethod:(NSString *)httpMethod parameters: (NSDictionary *)httpParameters
+{
     
-    [self initialize:^{
-        successBlock(weakSelf.username, weakSelf.userID);
-    }];
+    self.baseRequestURL = URL;
+    self.httpRequestMethod = httpMethod;
+    self.httpRequestParameters = httpParameters;
+
+    NSMutableDictionary *oauthParametersWithoutSignature = [[NSMutableDictionary alloc] init];
+    [oauthParametersWithoutSignature setObject:self.oauthConsumerKey     forKey:@"oauth_consumer_key"];
+    [oauthParametersWithoutSignature setObject:self.oauthNonce           forKey:@"oauth_nonce"];
+    [oauthParametersWithoutSignature setObject:self.oauthSignatureMethod forKey:@"oauth_signature_method"];
+    [oauthParametersWithoutSignature setObject:self.oauthTimestamp       forKey:@"oauth_timestamp"];
+    [oauthParametersWithoutSignature setObject:self.oauthToken           forKey:@"oauth_token"];
+    [oauthParametersWithoutSignature setObject:self.oauthVersion         forKey:@"oauth_version"];
+    self.oauthParametersWITHOUTOauthSignature = oauthParametersWithoutSignature;
+
+    NSMutableDictionary *oauthParametersWithSignature = [NSMutableDictionary dictionaryWithDictionary:oauthParametersWithoutSignature];
+    [oauthParametersWithSignature setObject:self.oauthSignature forKey:@"oauth_signature"];
+    
+    self.oauthParametersWITHOauthSignature = oauthParametersWithSignature;
 }
 
-
-- (void) initWithURL: (NSString *)URL httpMethod:(NSString *)httpMethod parameters: (NSDictionary *)httpParameters withCompletionHandler: (void (^)(void)) onCompletion
+- (NSString *)getAuthorizationHeader: (NSString *)URL httpMethod:(NSString *)httpMethod parameters: (NSDictionary *)httpParameters
 {
-    __weak typeof(self) weakSelf = self;
-    [self initialize:^{
-     
-//        self.baseRequestURL = URL;
-//        self.httpRequestMethod = httpMethod;
-//        self.httpRequestParameters = httpParameters;
-//        
-//        NSMutableDictionary *oauthParametersWithoutSignature = [[NSMutableDictionary alloc] init];
-//        [oauthParametersWithoutSignature setObject:self.oauthConsumerKey     forKey:@"oauth_consumer_key"];
-//        [oauthParametersWithoutSignature setObject:self.oauthNonce           forKey:@"oauth_nonce"];
-//        [oauthParametersWithoutSignature setObject:self.oauthSignatureMethod forKey:@"oauth_signature_method"];
-//        [oauthParametersWithoutSignature setObject:self.oauthTimestamp       forKey:@"oauth_timestamp"];
-//        [oauthParametersWithoutSignature setObject:self.oauthToken           forKey:@"oauth_token"];
-//        [oauthParametersWithoutSignature setObject:self.oauthVersion         forKey:@"oauth_version"];
-//        self.oauthParametersWITHOUTOauthSignature = oauthParametersWithoutSignature;
-//        
-//        NSMutableDictionary *oauthParametersWithSignature = [NSMutableDictionary dictionaryWithDictionary:oauthParametersWithoutSignature];
-//        [oauthParametersWithSignature setObject:self.oauthSignature forKey:@"oauth_signature"];
-//        self.oauthParametersWITHOauthSignature = oauthParametersWithSignature;
-        
-            weakSelf.baseRequestURL = URL;
-            weakSelf.httpRequestMethod = httpMethod;
-            weakSelf.httpRequestParameters = httpParameters;
 
-            NSMutableDictionary *oauthParametersWithoutSignature = [[NSMutableDictionary alloc] init];
-            [oauthParametersWithoutSignature setObject:weakSelf.oauthConsumerKey     forKey:@"oauth_consumer_key"];
-            [oauthParametersWithoutSignature setObject:weakSelf.oauthNonce           forKey:@"oauth_nonce"];
-            [oauthParametersWithoutSignature setObject:weakSelf.oauthSignatureMethod forKey:@"oauth_signature_method"];
-            [oauthParametersWithoutSignature setObject:weakSelf.oauthTimestamp       forKey:@"oauth_timestamp"];
-            [oauthParametersWithoutSignature setObject:weakSelf.oauthToken           forKey:@"oauth_token"];
-            [oauthParametersWithoutSignature setObject:weakSelf.oauthVersion         forKey:@"oauth_version"];
-            weakSelf.oauthParametersWITHOUTOauthSignature = oauthParametersWithoutSignature;
+    [self initWithURL:URL httpMethod:httpMethod parameters:httpParameters];
 
-            NSMutableDictionary *oauthParametersWithSignature = [NSMutableDictionary dictionaryWithDictionary:oauthParametersWithoutSignature];
-            [oauthParametersWithSignature setObject:weakSelf.oauthSignature forKey:@"oauth_signature"];
-            weakSelf.oauthParametersWITHOauthSignature = oauthParametersWithSignature;
-        
-        onCompletion();
-    }];
-}
+    NSMutableString *authorizationHeader = [NSMutableString stringWithString:@"OAuth "];
 
-- (void)getAuthorizationHeader: (NSString *)URL httpMethod:(NSString *)httpMethod parameters: (NSDictionary *)httpParameters withCompletionHandler: (void (^)(NSString *authHeader))successBlock
-{
-    __weak typeof(self) weakSelf = self;
-    [self initWithURL:URL httpMethod:httpMethod parameters:httpParameters withCompletionHandler:^{
+    NSArray *sortedKeys = [[self.oauthParametersWITHOauthSignature allKeys] sortedArrayUsingSelector:@selector(compare:)];
+    NSMutableString *headerStringWithEncodedParameters = [[NSMutableString alloc] init];
+
+    for (NSString *key in sortedKeys) {
+        NSString *encodedKey = [key stringByTwitterEncodingString];
         
-        NSMutableString *authorizationHeader = [NSMutableString stringWithString:@"OAuth "];
-        
-        NSArray *sortedKeys = [[weakSelf.oauthParametersWITHOauthSignature allKeys] sortedArrayUsingSelector:@selector(compare:)];
-        NSMutableString *headerStringWithEncodedParameters = [[NSMutableString alloc] init];
-        
-        for (NSString *key in sortedKeys) {
-            NSString *encodedKey = [weakSelf encodeString:key];
-            
-            NSString *encodedValue = [weakSelf encodeString:[weakSelf.oauthParametersWITHOauthSignature objectForKey:key]];
-            NSString *queryParams = [NSString stringWithFormat:@"%@=\"%@\", ", encodedKey, encodedValue];
-            [headerStringWithEncodedParameters appendString:queryParams];
-        }
-        NSUInteger trailingLength = [headerStringWithEncodedParameters length]-2; //remove trailing ',' and 'space'
-        [authorizationHeader appendString:[headerStringWithEncodedParameters substringToIndex:trailingLength]];
-        
-        successBlock(authorizationHeader);
-    }];
+        NSString *encodedValue = [[self.oauthParametersWITHOauthSignature objectForKey:key] stringByTwitterEncodingString];
+        NSString *queryParams = [NSString stringWithFormat:@"%@=\"%@\", ", encodedKey, encodedValue];
+        [headerStringWithEncodedParameters appendString:queryParams];
+    }
+    NSUInteger trailingLength = [headerStringWithEncodedParameters length]-2; //remove trailing ',' and 'space'
+    [authorizationHeader appendString:[headerStringWithEncodedParameters substringToIndex:trailingLength]];
+
+    return authorizationHeader;
 }
 
 - (NSString *)oauthNonce
@@ -213,8 +173,8 @@
     for (NSString *key in completeParameters) {
         NSString *value = [completeParameters objectForKey:key];
         
-        NSString *encodedKey = [self encodeString: key];
-        NSString *encodedValue = [self encodeString:value];
+        NSString *encodedKey = [key stringByTwitterEncodingString];
+        NSString *encodedValue = [value stringByTwitterEncodingString];
         [encodedParameters setObject:encodedValue forKey:encodedKey];
     }
     
@@ -234,8 +194,8 @@
     NSString *baseURL = self.baseRequestURL;
     
     //Create base signature string
-    NSString *encodedBaseURL = [self encodeString:baseURL];
-    NSString *encodedParameterString = [self encodeString:parameterString];
+    NSString *encodedBaseURL = [baseURL stringByTwitterEncodingString];
+    NSString *encodedParameterString = [parameterString stringByTwitterEncodingString];
 
     NSMutableString *baseSignature = [NSMutableString stringWithString:[httpMethod uppercaseString]];
     [baseSignature appendString:@"&"];
@@ -244,8 +204,8 @@
     [baseSignature appendString:encodedParameterString];
     
     //Create signing key
-    NSString *encodedConsumerSecret = [self encodeString:self.oauthConsumerSecret];
-    NSString *encodedOauthTokenSecret = [self encodeString:self.oauthTokenSecret];
+    NSString *encodedConsumerSecret = [self.oauthConsumerSecret stringByTwitterEncodingString];
+    NSString *encodedOauthTokenSecret = [self.oauthTokenSecret stringByTwitterEncodingString];
     
     NSMutableString *signingKey = [NSMutableString stringWithString:encodedConsumerSecret];
     [signingKey appendString:@"&"];
@@ -261,21 +221,6 @@
     NSString *oauthSignature = [base64Data base64EncodedStringWithOptions:kNilOptions];
     
     return oauthSignature;
-}
-
-
-#pragma mark - Helper methods
-
-//Twitter Percent Encoding based on RFC 3986
-//https://dev.twitter.com/oauth/overview/percent-encoding-parameters
-
-- (NSString *)encodeString: (NSString *)str
-{
-    NSString *allowedCharacterString = @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
-    NSCharacterSet *allowedCharacterSet = [NSCharacterSet characterSetWithCharactersInString:allowedCharacterString];
-    
-    NSString *encodedStr = [str stringByAddingPercentEncodingWithAllowedCharacters:allowedCharacterSet];
-    return encodedStr;
 }
 
 @end

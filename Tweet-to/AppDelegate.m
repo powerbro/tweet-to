@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "OauthSLFramework.h"
 
 @interface AppDelegate ()
 
@@ -17,6 +18,33 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    if([[NSUserDefaults standardUserDefaults] boolForKey:@"has_launched_before"] == NO) {
+        
+        dispatch_semaphore_t waitSemaphore = dispatch_semaphore_create(0);
+
+        OauthSLFramework *oauthFromACAccount = [[OauthSLFramework alloc] init];
+        [oauthFromACAccount getUserAccessTokensFromACAccount:^(NSDictionary *userAccessTokens) {
+            NSString *userID = [userAccessTokens           objectForKey:@"user_id"];
+            NSString *username = [userAccessTokens         objectForKey:@"screen_name"];
+            NSString *oauthToken = [userAccessTokens       objectForKey:@"oauth_token"];
+            NSString *oauthTokenSecret = [userAccessTokens objectForKey:@"oauth_token_secret"];
+
+            NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+            [userDefaults setObject:userID  forKey:@"user_id"];
+            [userDefaults setObject:username forKey:@"screen_name"];
+            [userDefaults setObject:oauthToken forKey:@"oauth_token"];
+            [userDefaults setObject:oauthTokenSecret forKey:@"oauth_token_secret"];
+
+            [userDefaults setBool:YES forKey:@"has_launched_before"];
+            [userDefaults synchronize];
+            
+            dispatch_semaphore_signal(waitSemaphore);
+        }];
+        
+        dispatch_semaphore_wait(waitSemaphore, DISPATCH_TIME_FOREVER);
+    }
+    
     return YES;
 }
 

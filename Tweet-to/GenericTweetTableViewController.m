@@ -93,10 +93,6 @@
     
 }
 
-//- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    return 400.0f;
-//}
 
 - (CGRect)rectForText:(NSString *)text usingFont:(UIFont *)font boundedBySize:(CGSize)maxSize
 {
@@ -133,31 +129,7 @@
          
          return rec.size.height + remainingHeight;
      }
-     
-     
-//     if ([self.tweets count]) {
-//         
-//         TweetTableViewCell *protoCell = (TweetTableViewCell *)[tableView dequeueReusableCellWithIdentifier:@"HomeTimelineCell"];
-//         
-//        
-//         
-//         [self configureCell:protoCell forRowAtIndexPath:indexPath];
-//         
-//         //NSLog(@"Label height: %f width  : %f", protoCell.tweetLabel.frame.size.height, protoCell.tweetLabel.frame.size.width);
-//         [protoCell setNeedsUpdateConstraints];
-//         [protoCell updateConstraintsIfNeeded];
-//         
-//         protoCell.bounds = CGRectMake(0, 0, CGRectGetWidth(tableView.bounds), CGRectGetHeight(protoCell.bounds));
-//         protoCell.tweetLabel.preferredMaxLayoutWidth = CGRectGetWidth(tableView.bounds);
-//
-//         protoCell.autoresizingMask = UIViewAutoresizingFlexibleHeight;
-//         
-//         CGSize size = [protoCell.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
-//         //CGSize size = protoCell.contentView.bounds.size;
-//         NSLog(@"content view height: %f width  : %f", size.height, size.width);
-//         return  size.height + 1;
-//     }
- 
+    
      return 120;
  }
 
