@@ -7,37 +7,32 @@
 //
 
 #import "GenericTweetTableViewController.h"
-#import "TweetTableViewCell.h"
+#import "Tweet.h"
+#import "User.h"
 
-#import "TweetJsonParams.h"
 #import "ImageDownload.h"
 
-
 @interface GenericTweetTableViewController ()
-
-@property (strong, nonatomic) NSMutableArray *profileImages; // UIImages
-
 @end
 
 @implementation GenericTweetTableViewController
 
-- (void)viewDidLoad {
+@dynamic fetchedResultsController;
+
+#pragma mark - Generic method implementation
+
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     
     self.refreshControl = [[UIRefreshControl alloc] init];
     [self.refreshControl addTarget:self action:@selector(refreshTweets)forControlEvents:UIControlEventValueChanged];
     
-    //[self fetchTweets];
-    
-#warning IOS 8.0 feature -- Untested on 7.0
+    #warning IOS 8.0 feature -- Untested on 7.0
     //self.tableView.estimatedRowHeight = 120;
     //self.tableView.rowHeight = UITableViewAutomaticDimension;
 }
 
-- (void)fetchTweets
-{
-    self.tweets = nil;
-}
 
 - (void)refreshTweets
 {
@@ -45,59 +40,46 @@
     [self fetchTweets];
 }
 
-- (void) setTweets:(NSArray *)tweets
-{
-    _tweets = tweets;
-    _profileImages = [NSMutableArray arrayWithCapacity:[tweets count]];
-    for (int i = 0; i < [tweets count]; i++) {
-        [_profileImages addObject:[NSNull null]];
-    }
-    
-    [self.tableView reloadData];
-    NSLog(@"reload data");
-}
 
 #pragma mark - Table view data source
 
-
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return MAX(1, [self.tweets count]); /* Add atleast 1 placeholder */
+- (NSInteger)tableView:(UITableView *)table numberOfRowsInSection:(NSInteger)section {
+    if ([[self.fetchedResultsController sections] count] > 0) {
+        id <NSFetchedResultsSectionInfo> sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:section];
+        //NSLog(@"rows %lu", [sectionInfo numberOfObjects]);
+        //NSLog(@"sections %lu", [[self.fetchedResultsController sections] count]);
+        return [sectionInfo numberOfObjects];
+    }
+    else
+        return 1;
 }
-
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSUInteger nodeCount = [self.tweets count];
+    Tweet *tweet = [self.fetchedResultsController objectAtIndexPath:indexPath];
     
-    if(nodeCount == 0 ) {
+    if(!tweet) {
         UITableViewCell *placeHolderCell = [tableView dequeueReusableCellWithIdentifier:@"PlaceHolderCell" forIndexPath:indexPath];
         return placeHolderCell;
     }
     
+    if (![tweet isKindOfClass:[Tweet class]])
+        NSLog(@"Something went wrong while fetching results from core data");
+        
     TweetTableViewCell *tweetCell = (TweetTableViewCell *)[tableView dequeueReusableCellWithIdentifier:@"HomeTimelineCell" forIndexPath:indexPath];
+    [self configureCell:tweetCell atIndexPath:indexPath];
     
-    //-----------------
-    // Configure the cell...
-    // Reset cell image or use prepare for reuse
-    //----------------------
-    tweetCell.profileImage.image = nil;
-    [self configureCell:tweetCell forRowAtIndexPath:indexPath];
     return tweetCell;
-    
 }
 
 
 - (CGRect)rectForText:(NSString *)text usingFont:(UIFont *)font boundedBySize:(CGSize)maxSize
 {
-    NSAttributedString *attrString =
-    [[NSAttributedString alloc] initWithString:text
+    NSAttributedString *attrString = [[NSAttributedString alloc] initWithString:text
                                     attributes:@{ NSFontAttributeName:font}];
     
     return [attrString boundingRectWithSize:maxSize
@@ -105,28 +87,24 @@
                                     context:nil];
 }
 
-
  - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
  {
-     if([self.tweets count]) {
-         
-         NSDictionary *tweet = self.tweets[indexPath.row];
-         NSString *tweetText = [tweet valueForKeyPath:TEXT];
-         
+     Tweet *tweet = [self.fetchedResultsController objectAtIndexPath:indexPath];
+     if(tweet) {
+         NSString *tweetText = tweet.text;
+
          CGFloat standardMargin = 5.0f;
          CGFloat imageWidth = 48.0f;
          CGFloat screenWidth = tableView.contentSize.width - 50.0f;
          
          CGFloat labelWidth = screenWidth - imageWidth - standardMargin*2.0;
          CGFloat labelHeight = 2500.0f; // minimum height for label;
-         
-         
          CGFloat nameLabelHeight = 25.0f;
          CGFloat extraPadding = 10.0f + 5.0f;
          CGFloat remainingHeight = nameLabelHeight + extraPadding + standardMargin*2.0;
       
-         CGRect rec = [self rectForText:tweetText usingFont:[UIFont systemFontOfSize:14.0] boundedBySize:CGSizeMake(labelWidth, labelHeight)];
-         
+         CGRect rec = [self rectForText:tweetText usingFont:[UIFont systemFontOfSize:14.0]
+                          boundedBySize:CGSizeMake(labelWidth, labelHeight)];
          return rec.size.height + remainingHeight;
      }
     
@@ -134,40 +112,43 @@
  }
 
 
-- (void)configureCell:(TweetTableViewCell *)tweetCell forRowAtIndexPath:(NSIndexPath *)indexPath {
+
+- (void)configureCell:(TweetTableViewCell *)tweetCell atIndexPath:(NSIndexPath *)indexPath {
     
-    NSDictionary *tweet = self.tweets[indexPath.row];
+    Tweet *tweet = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    User *user = tweet.created_by;
     
-    #warning Use array(or core data) -- do not fetch every time
+    NSString *profileString = [user.image_url stringByReplacingOccurrencesOfString:@"_normal" withString:@""];
+    NSURL *profileURL = [NSURL URLWithString:profileString];
     
-    //----------------------------
-    // Send NSURL request to fetch profile icon
-    //----------------------------
-    
-    if (self.profileImages[indexPath.row] != [NSNull null]) {
-        if ([self.profileImages[indexPath.row] isKindOfClass:[UIImage class]]) {
-            tweetCell.profileImage.image = self.profileImages[indexPath.row];
-        }
-    }
-    else {
-        NSURL *tweetURL = [NSURL URLWithString :[tweet valueForKeyPath:IMAGE_URL]];
+    if (!user.profile_image) {
+        NSManagedObjectID *userObjectID = user.objectID;
         
-        ImageDownload *imageDownload = [[ImageDownload alloc] init];
-        [imageDownload downloadImageAsync:tweetURL setImage:^(UIImage *image) {
+        [ImageDownload downloadImageAsync:profileURL setImage:^(NSData *imageData) {
+            
             dispatch_async(dispatch_get_main_queue(), ^{
-                self.profileImages[indexPath.row] = image;
-                tweetCell.profileImage.image = image;
+                tweetCell.profileImage.image = [UIImage imageWithData:imageData];
             });
+            
+            NSManagedObjectContext *backgroundMOC = [[NSManagedObjectContext alloc]
+                                                     initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+            [backgroundMOC setParentContext:self.managedObjectContext];
+            [backgroundMOC performBlock:^{
+                User *updatedUser = (User *)[backgroundMOC objectWithID:userObjectID];
+                //Tweet *updatedTweet = (Tweet *)[backgroundMOC objectWithID:tweetObjectID];
+                
+                [updatedUser loadProfileImageWithData:imageData inManagedObjectContext:backgroundMOC];
+            }];
         }];
     }
+
+    tweetCell.profileImage.image = [UIImage imageWithData: user.profile_image];
+    tweetCell.nameLabel.text = user.name;
     
-    tweetCell.nameLabel.text = [tweet valueForKeyPath:NAME];
-    
-    NSString *twitterHandle = @"@";
-    twitterHandle = [twitterHandle stringByAppendingString:[tweet valueForKeyPath:USERNAME]];
+    NSString *twitterHandle = [@"@" stringByAppendingString:user.username];
     tweetCell.twitterHandleLabel.text = twitterHandle;
     
-    tweetCell.tweetLabel.text = [tweet valueForKeyPath:TEXT];
+    tweetCell.tweetLabel.text = tweet.text;
     tweetCell.tweetLabel.numberOfLines = 0;
     
     tweetCell.tweetLabel.layer.masksToBounds = YES;
@@ -182,6 +163,58 @@
 
 
 
+#pragma mark - NSFetchResultController Delegate
+
+/*
+ Assume self has a property 'tableView' -- as is the case for an instance of a UITableViewController
+ subclass -- and a method configureCell:atIndexPath: which updates the contents of a given cell
+ with information from a managed object at the given index path in the fetched results controller.
+ */
+
+- (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
+    [self.tableView beginUpdates];
+}
+
+
+- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject
+       atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type
+      newIndexPath:(NSIndexPath *)newIndexPath {
+    
+    UITableView *tableView = self.tableView;
+    switch(type) {
+            
+        case NSFetchedResultsChangeInsert:
+            [tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
+                             withRowAnimation:UITableViewRowAnimationFade];
+            break;
+            
+        case NSFetchedResultsChangeDelete:
+            [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                             withRowAnimation:UITableViewRowAnimationFade];
+            break;
+            
+        case NSFetchedResultsChangeUpdate:
+            [self configureCell:[tableView cellForRowAtIndexPath:indexPath]
+                    atIndexPath:indexPath];
+            break;
+            
+        case NSFetchedResultsChangeMove:
+            [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                             withRowAnimation:UITableViewRowAnimationFade];
+            [tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
+                             withRowAnimation:UITableViewRowAnimationFade];
+            break;
+    }
+}
+
+
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
+    [self.tableView endUpdates];
+}
+
+
 #pragma mark - Navigation
+
+
 
 @end

@@ -10,7 +10,7 @@
 
 @implementation ImageDownload
 
-- (void)downloadImageAsync:(NSURL *)imageURL setImage:(void(^)(UIImage *)) imageFetcher
++ (void)downloadImageAsync:(NSURL *)imageURL setImage:(void(^)(NSData *)) imageFetcher
 {
     NSURLRequest *request = [NSURLRequest requestWithURL:imageURL];
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
@@ -19,8 +19,9 @@
     NSURLSessionDownloadTask *downloadTask = [session downloadTaskWithURL:imageURL completionHandler:^(NSURL * _Nullable location, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if(!error) {
             if([response.URL isEqual:request.URL]) {
-                UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:location]];
-                imageFetcher(image);
+                //UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:location]];
+                NSData *imageData = [NSData dataWithContentsOfURL:location];
+                imageFetcher(imageData);
                 //NSLog(@"image response: %@", response);
             }
         }

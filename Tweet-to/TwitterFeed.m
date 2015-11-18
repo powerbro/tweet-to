@@ -25,11 +25,14 @@
     self = [super init];
     if (self) {
         _authorize = [[Authorization alloc] init];
+        
+        _userID = _authorize.userID;
+        _username = _authorize.username;
     }
     return self;
 }
 
-- (void) performSLRequestForTwitterAccount:(NSString *)HTTPRequestType withURL:(NSURL *)url withParameters: (NSDictionary *)parameters result:(void(^)(id response))responseHandler
+- (void) performHttpRequestForTwitterAccountOfType:(NSString *)HTTPRequestType withURL:(NSURL *)url withParameters: (NSDictionary *)parameters result:(void(^)(id response))responseHandler
 {
         NSString *authorizationHeader = [self.authorize getAuthorizationHeader:[url absoluteString]
                                                                 httpMethod:HTTPRequestType
@@ -78,32 +81,26 @@
         [downloadTask resume];
 }
 
-- (void)getUsernameOnInitialization:(void (^)(NSString *))fetchUsername
-{
-    [self.authorize getUserDetails:^(NSString *username, NSString *userID) {
-        fetchUsername(username);
-    }];
-}
 
 #pragma mark - GET methods
 
-- (void) getUserHomeTimelineData: (void(^)(NSArray *tweets))tweetFetcher
+- (void) getHomeTimelineData: (void(^)(NSArray *tweets))tweetFetcher
 {
     NSURL *homeTimelineURL = [NSURL URLWithString:@"https://api.twitter.com/1.1/statuses/home_timeline.json"];
     NSDictionary *parameters = @{@"count" : @"50"};
     
-    [self performSLRequestForTwitterAccount:@"GET" withURL:homeTimelineURL withParameters:parameters result:^(id response) {
+    [self performHttpRequestForTwitterAccountOfType:@"GET" withURL:homeTimelineURL withParameters:parameters result:^(id response) {
         NSArray *tweets = response;
         tweetFetcher(tweets);
     }];
 }
 
-- (void) getUserTimelineData: (NSString *)userName tweetCount:(NSInteger)count withCompletionHandler:(void(^)(NSArray *tweets))tweetFetcher
+- (void) getLastPostedTweetsForUser: (NSString *)userName tweetCount:(NSInteger)count withCompletionHandler:(void(^)(NSArray *tweets))tweetFetcher
 {
     NSURL* userTimelineURL = [NSURL URLWithString:@"https://api.twitter.com/1.1/statuses/user_timeline.json"];
     NSDictionary *parameters = @{@"screen_name": userName, @"count" : [@(count) stringValue]};
     
-    [self performSLRequestForTwitterAccount:@"GET" withURL:userTimelineURL withParameters:parameters result:^(id response) {
+    [self performHttpRequestForTwitterAccountOfType:@"GET" withURL:userTimelineURL withParameters:parameters result:^(id response) {
         NSArray *tweets = response;
         tweetFetcher(tweets);
     }];
@@ -115,7 +112,7 @@
     NSURL *userDataURL = [NSURL URLWithString:@"https://api.twitter.com/1.1/users/show.json"];
     NSDictionary *parameters = @{@"screen_name" : userName};
     
-    [self performSLRequestForTwitterAccount:@"GET" withURL:userDataURL withParameters:parameters result:^(id response) {
+    [self performHttpRequestForTwitterAccountOfType:@"GET" withURL:userDataURL withParameters:parameters result:^(id response) {
         NSDictionary *userData = response;
         userDataFetcher(userData);
     }];
@@ -127,7 +124,7 @@
     NSURL *followerListURL = [NSURL URLWithString:@"https://api.twitter.com/1.1/followers/list.json"];
     NSDictionary *parameters = @{@"screen_name" : username, @"count": @"50"};
     
-    [self performSLRequestForTwitterAccount:@"GET" withURL: followerListURL withParameters:parameters result:^(id response) {
+    [self performHttpRequestForTwitterAccountOfType:@"GET" withURL: followerListURL withParameters:parameters result:^(id response) {
         NSArray *followerDataArray = response;
         NSArray *followerArray = [followerDataArray valueForKeyPath:@"users"];
         fetchFollowerList(followerArray);
@@ -142,7 +139,7 @@
     NSURL *postTweetURL = [NSURL URLWithString:@"https://api.twitter.com/1.1/statuses/update.json"];
     NSDictionary *parameters = @{@"status" : tweet};
     
-    [self performSLRequestForTwitterAccount:@"POST" withURL:postTweetURL withParameters:parameters result:nil];
+    [self performHttpRequestForTwitterAccountOfType:@"POST" withURL:postTweetURL withParameters:parameters result:nil];
 }
 
 @end

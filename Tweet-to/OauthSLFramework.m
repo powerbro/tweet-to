@@ -22,14 +22,18 @@
     
     [accountStore requestAccessToAccountsWithType:accountTypeTwitter options:nil completion:^(BOOL granted, NSError *error) {
         if(granted) {
-                ACAccount *twitterAccount = [[accountStore accountsWithAccountType: accountTypeTwitter] lastObject];
-                [self requestTokenForReverseOauthAccount:twitterAccount withCompletionHandler:^(id response) {
-                    NSString *oauthSignatureString = response;
-                    [self requestAccessToken:twitterAccount withSignature:oauthSignatureString withCompletionHandler:^(id response) {
-                        NSString *accessTokens = response;
-                        //NSLog(@"Access Tokens : %@",accessTokens);
-                        
-                        NSMutableDictionary *queryStringDictionary = [[NSMutableDictionary alloc] init];
+            ACAccount *twitterAccount = [[accountStore accountsWithAccountType: accountTypeTwitter] lastObject];
+
+            [self requestTokenForReverseOauthAccount:twitterAccount withCompletionHandler:^(id response) {
+                
+                NSString *oauthSignatureString = response;
+                [self requestAccessToken:twitterAccount withSignature:oauthSignatureString withCompletionHandler:^(id response) {
+                    NSString *accessTokens = response;
+                    //NSLog(@"Access Tokens : %@",accessTokens);
+                    
+                    NSMutableDictionary *queryStringDictionary = nil;
+                    if (accessTokens) {
+                        queryStringDictionary= [[NSMutableDictionary alloc] init];
                         NSArray *urlParts = [accessTokens componentsSeparatedByString:@"&"];
                         for (NSString *keyValuePair in urlParts) {
                             NSArray *pair = [keyValuePair componentsSeparatedByString:@"="];
@@ -38,9 +42,11 @@
                             NSString *value = [[pair lastObject] stringByRemovingPercentEncoding];
                             [queryStringDictionary setObject:value forKey:key];
                         }
-                        fetchAccessTokenDict(queryStringDictionary);
-                    }];
+                    }
+                    
+                    fetchAccessTokenDict(queryStringDictionary);
                 }];
+            }];
         }
         else {
             NSLog(@"Access denied");
@@ -81,7 +87,10 @@
     [request performRequestWithHandler:^(NSData *data,
                                          NSHTTPURLResponse *urlResponse,
                                          NSError *error) {
-        NSString *accessTokens = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        
+        NSString *accessTokens = nil;
+        if(data)
+            accessTokens = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         fetchAccessTokens(accessTokens);
     }];
 }

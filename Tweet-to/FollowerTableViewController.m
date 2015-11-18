@@ -7,43 +7,87 @@
 //
 
 #import "FollowerTableViewController.h"
-#import "TwitterFeed.h"
 #import "FollowingJsonParams.h"
+#import "ImageDownload.h"
+
+#import "TwitterFeed.h"
+#import "User.h"
 
 @interface FollowerTableViewController()
 
-@property (strong , nonatomic) NSString *username;
-@property (strong, nonatomic) NSArray *followers; // contains user dictionary of every follower
+@property (strong, nonatomic) NSString *myUsername;
+@property (strong, nonatomic) TwitterFeed *twitterAPI;
 @end
 
 @implementation FollowerTableViewController
 
+@synthesize fetchedResultsController = _fetchedResultsController;
+
 - (void)viewDidLoad
 {
+    if(!_twitterAPI)
+        _twitterAPI = [[TwitterFeed alloc] init];
+    self.myUsername = _twitterAPI.username;
+    
     [super viewDidLoad];
+    
+    NSError *error;
+    [self.fetchedResultsController performFetch:&error];
+    NSLog(@"Errors while fetching %@", error);
     [self fetchFollowers];
 }
 
-
-#pragma mark - Table view data source
-
 - (void) fetchFollowers
 {
-    TwitterFeed *twitterAPI = [[TwitterFeed alloc] init];
-    [twitterAPI getUsernameOnInitialization:^(NSString *username) {
-         [twitterAPI getFollowersList:username withCompletionHandler:^(NSArray *followerList) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self.username = username;
-                self.followers = followerList;
-            });
-         }];
+    [self.twitterAPI getFollowersList:self.myUsername withCompletionHandler:^(NSArray *followerList) {
+        
+        NSManagedObjectContext *backgroundMOC = [[NSManagedObjectContext alloc]initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+        [backgroundMOC setParentContext:self.managedObjectContext];
+        [backgroundMOC performBlock:^{
+            for (NSDictionary *followerDict in followerList) {
+                [User createFollowerForUser:self.myUsername
+                               withUsername:[followerDict valueForKeyPath:USERNAME]
+                                   withName:[followerDict valueForKey:NAME]
+                               withImageURL:[followerDict valueForKey:IMAGE_URL]
+                     inManagedObjectContext:backgroundMOC];
+            }
+        }];
     }];
 }
 
--(void)setFollowers:(NSArray *)followers
+
+- (NSFetchedResultsController *)fetchedResultsController
 {
-    _followers = followers;
-    [self.tableView reloadData];
+    if(_fetchedResultsController)
+        return _fetchedResultsController;
+    
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"User" inManagedObjectContext:self.managedObjectContext];
+    [fetchRequest setEntity:entity];
+    // Specify criteria for filtering which objects to fetch
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"ANY following.username == %@", self.myUsername];
+    [fetchRequest setPredicate:predicate];
+    // Specify how the fetched objects should be sorted
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"username"
+                                                                   ascending:YES];
+    [fetchRequest setSortDescriptors:[NSArray arrayWithObjects:sortDescriptor, nil]];
+    
+    _fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:nil];
+    
+    _fetchedResultsController.delegate = self;
+    return _fetchedResultsController;
+}
+
+#pragma mark - Table view data source
+
+
+- (NSUInteger)countNodesInSection:(NSInteger)section
+{
+    if ([[self.fetchedResultsController sections] count] > 0) {
+        id <NSFetchedResultsSectionInfo> sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:section];
+        return [sectionInfo numberOfObjects];
+    }
+    return 0;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -53,37 +97,120 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSInteger nodeCount = [self.followers count];
-    return MAX(1, nodeCount);
+    NSUInteger nodeCount = [self countNodesInSection:section];
+    return nodeCount;
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 75.0f;
+}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger nodeCount = [self.followers count];
-    
-    if (nodeCount == 0) {
+    //NSUInteger nodeCount = [self countNodesInSection:indexPath.section];
+    User *follower = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    if (!follower) {
         UITableViewCell *followerCell = [tableView dequeueReusableCellWithIdentifier:@"PlaceHolderCell" forIndexPath:indexPath];
         return followerCell;
     }
     
     UITableViewCell *followerCell = [tableView dequeueReusableCellWithIdentifier:@"followers" forIndexPath:indexPath];
-    [self configureCell:followerCell cellForRowAtIndexPath:indexPath];
+    [self configureCell:followerCell atIndexPath:indexPath];
     
     return followerCell;
 }
 
-- (void)configureCell:(UITableViewCell *)followerCell cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)configureCell:(UITableViewCell *)followerCell atIndexPath:(NSIndexPath *)indexPath
 {
-    NSDictionary *follower = self.followers[indexPath.row];
-    followerCell.textLabel.text = [follower valueForKeyPath:NAME];
-    followerCell.detailTextLabel.text = [@"@" stringByAppendingString:[follower valueForKeyPath:USERNAME]];
-    followerCell.imageView.image = [UIImage imageNamed:@"tweet.png"];
+    User *follower = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    
+    NSString *profileString = [follower.image_url stringByReplacingOccurrencesOfString:@"_normal" withString:@""];
+    NSURL *profileURL = [NSURL URLWithString:profileString];
+    
+    if (follower.profile_image) {
+        followerCell.imageView.image = [UIImage imageWithData:follower.profile_image];
+        followerCell.imageView.alpha = 1.0;
+    }
+    else {
+        NSManagedObjectID *followerObjectID = follower.objectID;
+        [ImageDownload downloadImageAsync:profileURL setImage:^(NSData *imageData) {
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                followerCell.imageView.image = [UIImage imageWithData:imageData];
+                followerCell.imageView.alpha = 1.0;
+            });
+            
+            NSManagedObjectContext *backgroundMOC = [[NSManagedObjectContext alloc]
+                                                     initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+            
+            [backgroundMOC setParentContext:self.managedObjectContext];
+            [backgroundMOC performBlock:^{
+                User *updatedFollower = (User *)[backgroundMOC objectWithID:followerObjectID];
+                [updatedFollower loadProfileImageWithData:imageData inManagedObjectContext:backgroundMOC];
+            }];
+        }];
+    }
+         
+    followerCell.textLabel.text = follower.name;
+    followerCell.detailTextLabel.text = [@"@" stringByAppendingString:follower.username];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+
+
+#pragma mark - NSFetchResultController Delegate
+
+/*
+ Assume self has a property 'tableView' -- as is the case for an instance of a UITableViewController
+ subclass -- and a method configureCell:atIndexPath: which updates the contents of a given cell
+ with information from a managed object at the given index path in the fetched results controller.
+ */
+
+- (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
+    [self.tableView beginUpdates];
+}
+
+
+- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject
+       atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type
+      newIndexPath:(NSIndexPath *)newIndexPath {
+    
+    UITableView *tableView = self.tableView;
+    
+    switch(type) {
+            
+        case NSFetchedResultsChangeInsert:
+            [tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
+                             withRowAnimation:UITableViewRowAnimationFade];
+            break;
+            
+        case NSFetchedResultsChangeDelete:
+            [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                             withRowAnimation:UITableViewRowAnimationFade];
+            break;
+            
+        case NSFetchedResultsChangeUpdate:
+            [self configureCell:[tableView cellForRowAtIndexPath:indexPath]
+                    atIndexPath:indexPath];
+            break;
+            
+        case NSFetchedResultsChangeMove:
+            [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                             withRowAnimation:UITableViewRowAnimationFade];
+            [tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
+                             withRowAnimation:UITableViewRowAnimationFade];
+            break;
+    }
+}
+
+
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
+    [self.tableView endUpdates];
 }
 
 

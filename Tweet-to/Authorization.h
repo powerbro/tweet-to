@@ -13,8 +13,8 @@
 
 #pragma Authorization: OAuth parameters
 
-
-- (void)getUserDetails: (void (^)(NSString *username, NSString *userID))successBlock;
+@property (strong, nonatomic) NSString *username;
+@property (strong, nonatomic) NSString *userID;
 
 - (NSString *)getAuthorizationHeader: (NSString *)URL httpMethod:(NSString *)httpMethod parameters: (NSDictionary *)httpParameters;
 

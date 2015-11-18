@@ -8,9 +8,9 @@
 
 #import "AppDelegate.h"
 #import "OauthSLFramework.h"
+#include "RootTabBarController.h"
 
 @interface AppDelegate ()
-
 @end
 
 @implementation AppDelegate
@@ -22,27 +22,36 @@
     if([[NSUserDefaults standardUserDefaults] boolForKey:@"has_launched_before"] == NO) {
         
         dispatch_semaphore_t waitSemaphore = dispatch_semaphore_create(0);
-
+        
         OauthSLFramework *oauthFromACAccount = [[OauthSLFramework alloc] init];
         [oauthFromACAccount getUserAccessTokensFromACAccount:^(NSDictionary *userAccessTokens) {
-            NSString *userID = [userAccessTokens           objectForKey:@"user_id"];
-            NSString *username = [userAccessTokens         objectForKey:@"screen_name"];
-            NSString *oauthToken = [userAccessTokens       objectForKey:@"oauth_token"];
-            NSString *oauthTokenSecret = [userAccessTokens objectForKey:@"oauth_token_secret"];
-
-            NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-            [userDefaults setObject:userID  forKey:@"user_id"];
-            [userDefaults setObject:username forKey:@"screen_name"];
-            [userDefaults setObject:oauthToken forKey:@"oauth_token"];
-            [userDefaults setObject:oauthTokenSecret forKey:@"oauth_token_secret"];
-
-            [userDefaults setBool:YES forKey:@"has_launched_before"];
-            [userDefaults synchronize];
             
+            if(userAccessTokens) {
+                NSString *userID = [userAccessTokens           objectForKey:@"user_id"];
+                NSString *username = [userAccessTokens         objectForKey:@"screen_name"];
+                NSString *oauthToken = [userAccessTokens       objectForKey:@"oauth_token"];
+                NSString *oauthTokenSecret = [userAccessTokens objectForKey:@"oauth_token_secret"];
+
+                NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+                [userDefaults setObject:userID  forKey:@"user_id"];
+                [userDefaults setObject:username forKey:@"screen_name"];
+                [userDefaults setObject:oauthToken forKey:@"oauth_token"];
+                [userDefaults setObject:oauthTokenSecret forKey:@"oauth_token_secret"];
+
+                [userDefaults setBool:YES forKey:@"has_launched_before"];
+                [userDefaults synchronize];
+            }
             dispatch_semaphore_signal(waitSemaphore);
         }];
         
+        //Waits until signal
         dispatch_semaphore_wait(waitSemaphore, DISPATCH_TIME_FOREVER);
+    }
+    
+    id vc = self.window.rootViewController;
+    if([vc isKindOfClass:[RootTabBarController class]]) {
+        RootTabBarController *rtbvc = vc;
+        rtbvc.managedObjectContext = self.managedObjectContext;
     }
     
     return YES;
@@ -51,11 +60,13 @@
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+    
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    [self saveContext];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {

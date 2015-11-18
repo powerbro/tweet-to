@@ -132,32 +132,38 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="followers" textLabel="BB8-kD-7nD" detailTextLabel="8DL-T9-Jcj" rowHeight="100" style="IBUITableViewCellStyleSubtitle" id="r19-WV-j4k">
-                                <rect key="frame" x="0.0" y="122" width="600" height="100"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="followers" textLabel="BB8-kD-7nD" detailTextLabel="8DL-T9-Jcj" imageView="7bJ-2Y-PPY" rowHeight="66" style="IBUITableViewCellStyleSubtitle" id="r19-WV-j4k">
+                                <rect key="frame" x="0.0" y="122" width="600" height="66"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="r19-WV-j4k" id="36K-mb-ylu">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="99.5"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" layoutMarginsFollowReadableWidth="YES" tableViewCell="r19-WV-j4k" id="36K-mb-ylu">
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="65.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="BB8-kD-7nD">
-                                            <rect key="frame" x="15" y="34" width="31.5" height="19.5"/>
+                                            <rect key="frame" x="111" y="17" width="31.5" height="19.5"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="8DL-T9-Jcj">
-                                            <rect key="frame" x="15" y="53.5" width="40.5" height="13.5"/>
+                                            <rect key="frame" x="111" y="36.5" width="40.5" height="13.5"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" alpha="0.5" contentMode="scaleAspectFit" image="twitter-about.png" id="7bJ-2Y-PPY">
+                                            <rect key="frame" x="15" y="0.0" width="81" height="65.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </imageView>
                                     </subviews>
+                                    <rect key="contentStretch" x="0.0" y="0.0" width="0.5" height="0.5"/>
+                                    <edgeInsets key="layoutMargins" top="15" left="8" bottom="8" right="8"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PlaceHolderCell" rowHeight="96" id="eGR-qu-WJ8">
-                                <rect key="frame" x="0.0" y="222" width="600" height="96"/>
+                                <rect key="frame" x="0.0" y="188" width="600" height="96"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="eGR-qu-WJ8" id="BFa-nq-3YG">
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="95.5"/>
@@ -476,7 +482,7 @@
             <objects>
                 <navigationController title="HomeNav" modalTransitionStyle="flipHorizontal" id="pvT-eK-G67" customClass="NavigationViewController" sceneMemberID="viewController">
                     <extendedEdge key="edgesForExtendedLayout" bottom="YES"/>
-                    <tabBarItem key="tabBarItem" title="Home" id="MGg-Py-1yl"/>
+                    <tabBarItem key="tabBarItem" title="Home" image="Home-64" selectedImage="Home-64" id="MGg-Py-1yl"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="top" id="L5n-sb-krU">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -496,10 +502,10 @@
             </objects>
             <point key="canvasLocation" x="2651" y="1717"/>
         </scene>
-        <!--Tab Bar Controller-->
+        <!--Root Tab Bar Controller-->
         <scene sceneID="KAn-Fd-aOf">
             <objects>
-                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="qQJ-2j-RJN" sceneMemberID="viewController">
+                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="qQJ-2j-RJN" customClass="RootTabBarController" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="9kr-WN-y1g"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="xyK-Y7-PsO">
@@ -521,7 +527,7 @@
         <scene sceneID="OYC-tn-aRo">
             <objects>
                 <navigationController title="TweetNav" automaticallyAdjustsScrollViewInsets="NO" id="Q16-FJ-ece" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Tweet" id="9t5-Oy-oVh"/>
+                    <tabBarItem key="tabBarItem" title="Tweet" image="Tweet-64" id="9t5-Oy-oVh"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="ilW-mf-1oI">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -686,7 +692,7 @@
         <scene sceneID="EPW-2j-TWx">
             <objects>
                 <navigationController title="MyTweetsNav" automaticallyAdjustsScrollViewInsets="NO" id="hBw-4P-s7b" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Me" id="PyC-CZ-ESe"/>
+                    <tabBarItem key="tabBarItem" title="Me" image="User Menu-64" id="PyC-CZ-ESe"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="GYn-5O-5aE">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -708,7 +714,7 @@
         <scene sceneID="9Uq-nq-iyr">
             <objects>
                 <navigationController title="FollowingNav" automaticallyAdjustsScrollViewInsets="NO" id="gHb-Lg-aFw" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="People" id="GwM-fR-7KL"/>
+                    <tabBarItem key="tabBarItem" title="People" image="User Groups-64" id="GwM-fR-7KL"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="wEI-qh-Za7">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -725,6 +731,11 @@
         </scene>
     </scenes>
     <resources>
+        <image name="Home-64" width="64" height="64"/>
+        <image name="Tweet-64" width="64" height="64"/>
+        <image name="User Groups-64" width="64" height="64"/>
+        <image name="User Menu-64" width="64" height="64"/>
+        <image name="twitter-about.png" width="1139" height="926"/>
         <image name="twitter-background.png" width="728" height="400"/>
     </resources>
 </document>

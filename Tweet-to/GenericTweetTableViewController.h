@@ -7,12 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <CoreData/CoreData.h>
+#import "TweetTableViewCell.h"
 
-@interface GenericTweetTableViewController : UITableViewController
 
-@property (strong, nonatomic) NSArray *tweets;
+@interface GenericTweetTableViewController : UITableViewController <NSFetchedResultsControllerDelegate>
 
-//Subclasses must implement and set self.tweets
+@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
+
+//Subclasses must implement
 - (void)fetchTweets;
+- (NSFetchedResultsController *)fetchedResultsController;
 
 @end

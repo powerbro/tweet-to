@@ -39,9 +39,6 @@
 @property (strong, nonatomic) NSDictionary *oauthParametersWITHOauthSignature;
 @property (strong, nonatomic) NSDictionary *oauthParametersWITHOUTOauthSignature;
 
-@property (strong, nonatomic) NSString *username;
-@property (strong, nonatomic) NSString *userID;
-
 @end
 
 @implementation Authorization
@@ -59,10 +56,6 @@
     return self;
 }
 
-- (void)getUserDetails: (void (^)(NSString *username, NSString *userID))successBlock
-{
-    successBlock(self.username, self.userID);
-}
 
 - (void) initWithURL: (NSString *)URL httpMethod:(NSString *)httpMethod parameters: (NSDictionary *)httpParameters
 {

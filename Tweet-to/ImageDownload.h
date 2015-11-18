@@ -10,5 +10,5 @@
 #import <UIKit/UIKit.h>
 
 @interface ImageDownload : NSObject
-- (void)downloadImageAsync:(NSURL *)imageURL setImage:(void(^)(UIImage *)) imageFetcher;
++ (void)downloadImageAsync:(NSURL *)imageURL setImage:(void(^)(NSData *)) imageFetcher;
 @end

@@ -10,7 +10,7 @@
 #import "TwitterFeed.h"
 
 @interface MyTweetsTableViewController ()
-
+@property (strong, nonatomic) TwitterFeed *twitterAPI;
 @end
 
 @implementation MyTweetsTableViewController
@@ -18,39 +18,21 @@
 - (void)viewDidLoad {
     // Do any additional setup after loading the view.
     
-//    TwitterFeed *twitterAPI = [[TwitterFeed alloc] init];
-//    [twitterAPI getUsernameFromACAccount:^(NSString *username) {
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            self.username = [@"@" stringByAppendingString:username];
-//            self.screenName = [@"What's up " stringByAppendingString:self.username];
-//            [super viewDidLoad];
-//        });
-//    }];
+    if (!_twitterAPI) {
+        _twitterAPI = [[TwitterFeed alloc] init];
+    }
     
-    TwitterFeed *twitterAPI = [[TwitterFeed alloc] init];
-    [twitterAPI getUsernameOnInitialization:^(NSString *username) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.username = [@"@" stringByAppendingString:username];
-            self.screenName = [@"What's up " stringByAppendingString:username];
-            [super viewDidLoad];
-            [self fetchTweets];
-        });
-    }];
+    self.username = _twitterAPI.username;
+    self.screenName = [@"What's up " stringByAppendingString:self.username];
+    
+    [super viewDidLoad];
+    [super fetchTweets];
+    
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

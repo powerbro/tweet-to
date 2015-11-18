@@ -14,6 +14,16 @@ NS_ASSUME_NONNULL_BEGIN
 @interface User : NSManagedObject
 
 // Insert code here to declare functionality of your managed object subclass
++ (User *)createUserWithUsername:(NSString *)tweeterUsername screenName:(nullable NSString *)tweeterName profileImageURL:(nullable NSString *)tweeterImageURL inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
+
++ (User *)loadUserDataFromUserDictionary:(NSDictionary *)userDictionary inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
+
++ (User *)createFollowerForUser:(NSString *)myUsername withUsername:(NSString *)followerUsername withName:(NSString *)followerName withImageURL:(NSString *)profileImageURL inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
+
+- (void)loadProfileImageWithData:(NSData *)imageData inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
+
+- (void)loadThumbnailProfileImageWithData:(NSData *)imageData inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
+
 
 @end
 

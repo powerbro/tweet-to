@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface Tweet : NSManagedObject
 
 // Insert code here to declare functionality of your managed object subclass
++ (void)loadTweetsFromTwitterArray:(NSArray *)tweets fromTimelineOfUser:(NSString *)myusername intoManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
 
 @end
 

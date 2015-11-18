@@ -10,24 +10,77 @@
 #import "TweetTableViewCell.h"
 
 #import "TwitterFeed.h"
-#import "TweetJsonParams.h"
-#import "ImageDownload.h"
+#import "Tweet.h"
 
 #import "CreateTweetViewController.h"
 #import "UserTimelineTableViewController.h"
 
-
 @interface HomeTimelineTableViewController ()
-//@property (strong, nonatomic) TweetTableViewCell *protoCell;
+
+@property (strong, nonatomic) NSString *myUsername;
+@property (strong, nonatomic) TwitterFeed *twitterAPI;
 @end
+
 
 @implementation HomeTimelineTableViewController
 
-- (void)viewDidLoad {
+@synthesize fetchedResultsController = _fetchedResultsController;
+
+- (void)viewDidLoad
+{
     
+    [self setupTweetBarButton];
+    [super viewDidLoad];
+    
+    if(!_twitterAPI)
+        _twitterAPI = [[TwitterFeed alloc] init];
+    self.myUsername = _twitterAPI.username;
+    NSLog(@"user %@", self.myUsername);
+    
+    
+#warning Show alert and quit
+    if (!self.myUsername) {
+        NSLog(@"Connect to internet. Quitting ...");
+    }
+    else {
+        NSError *error;
+        [self.fetchedResultsController performFetch:&error];
+        NSLog(@"%@", error);
+        [self fetchTweets];
+    }
+}
+
+
+- (NSFetchedResultsController *)fetchedResultsController
+{
+    if(_fetchedResultsController)
+        return _fetchedResultsController;
+    
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Tweet" inManagedObjectContext:self.managedObjectContext];
+    [fetchRequest setEntity:entity];
+    // Specify criteria for filtering which objects to fetch
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"from_timeline.username == %@", self.myUsername];
+    [fetchRequest setPredicate:predicate];
+    // Specify how the fetched objects should be sorted
+    //NSSortDescriptor *sortByUser = [[NSSortDescriptor alloc] initWithKey:@"from_timeline.username" ascending:YES];
+    NSSortDescriptor *sortByTime = [[NSSortDescriptor alloc] initWithKey:@"tweet_id" ascending:NO];
+    
+    [fetchRequest setSortDescriptors:[NSArray arrayWithObjects:sortByTime, nil]];
+    
+    _fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:nil];
+    
+    _fetchedResultsController.delegate = self;
+    return _fetchedResultsController;
+}
+
+
+- (void)setupTweetBarButton
+{
     //--------------------
     // Tweet bar button
     //--------------------
+
     UIImage *image = [[UIImage imageNamed:@"twitter-about.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
     
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -37,11 +90,8 @@
     
     UIBarButtonItem *tweetBarButton = [[UIBarButtonItem alloc] initWithCustomView:button];
     self.navigationItem.rightBarButtonItem = tweetBarButton;
-    
-    [super viewDidLoad];
-    [self fetchTweets];
-}
 
+}
 
 - (void)onTweetButtonTapped
 {
@@ -50,13 +100,15 @@
 
 - (void) fetchTweets
 {
-    TwitterFeed *twitterAPI = [[TwitterFeed alloc] init];
-    [twitterAPI getUserHomeTimelineData:^(NSArray *tweets) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.tweets = tweets;
+    [self.twitterAPI getHomeTimelineData:^(NSArray *tweets) {
+        NSManagedObjectContext *backgroundMOC = [[NSManagedObjectContext alloc]initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+        [backgroundMOC setParentContext:self.managedObjectContext];
+        [backgroundMOC performBlock:^{
+            [Tweet loadTweetsFromTwitterArray:tweets fromTimelineOfUser:self.myUsername
+                     intoManagedObjectContext:backgroundMOC];
             NSLog(@"tweets set");
-        });
-    }];
+        }];
+    }];    
 }
 
 #pragma mark - Table view data source
@@ -78,7 +130,8 @@
             
             TweetTableViewCell *tweetCell = (TweetTableViewCell *)sender;
             userController.screenName = tweetCell.nameLabel.text;
-            userController.username = tweetCell.twitterHandleLabel.text;
+            userController.username = [tweetCell.twitterHandleLabel.text substringFromIndex:1];
+            userController.managedObjectContext = self.managedObjectContext;
         }
     }
 }
