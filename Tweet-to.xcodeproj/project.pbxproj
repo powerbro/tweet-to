@@ -159,11 +159,11 @@
 		1E3E6DB21BC40A8D00A98CCC /* Tweet-to */ = {
 			isa = PBXGroup;
 			children = (
+				1E4849041BE8D98F00E7A3DA /* ConsumerTokens.h */,
 				1E3E6DB61BC40A8D00A98CCC /* AppDelegate.h */,
 				1E3E6DB71BC40A8D00A98CCC /* AppDelegate.m */,
 				1E48493B1BFA2AE700E7A3DA /* RootTabBarController.h */,
 				1E48493C1BFA2AE700E7A3DA /* RootTabBarController.m */,
-				1E4849041BE8D98F00E7A3DA /* ConsumerTokens.h */,
 				1E3E6DE91BC4107200A98CCC /* Model */,
 				1E3E6E191BC5378000A98CCC /* Controller */,
 				1E3E6DC21BC40A8D00A98CCC /* Assets.xcassets */,

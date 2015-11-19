@@ -480,7 +480,7 @@
         <!--HomeNav-->
         <scene sceneID="FeK-1S-P8i">
             <objects>
-                <navigationController title="HomeNav" modalTransitionStyle="flipHorizontal" id="pvT-eK-G67" customClass="NavigationViewController" sceneMemberID="viewController">
+                <navigationController title="HomeNav" modalTransitionStyle="flipHorizontal" id="pvT-eK-G67" sceneMemberID="viewController">
                     <extendedEdge key="edgesForExtendedLayout" bottom="YES"/>
                     <tabBarItem key="tabBarItem" title="Home" image="Home-64" selectedImage="Home-64" id="MGg-Py-1yl"/>
                     <toolbarItems/>
@@ -488,7 +488,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textAttributes key="titleTextAttributes">
-                            <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="21"/>
                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <offsetWrapper key="textShadowOffset" horizontal="0.0" vertical="0.0"/>
                         </textAttributes>
@@ -533,7 +533,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textAttributes key="titleTextAttributes">
-                            <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="21"/>
                         </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -698,7 +698,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textAttributes key="titleTextAttributes">
-                            <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="21"/>
                         </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -719,6 +719,9 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="wEI-qh-Za7">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <textAttributes key="titleTextAttributes">
+                            <fontDescription key="fontDescription" type="system" pointSize="21"/>
+                        </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>

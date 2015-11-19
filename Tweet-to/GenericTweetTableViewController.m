@@ -27,12 +27,9 @@
     
     self.refreshControl = [[UIRefreshControl alloc] init];
     [self.refreshControl addTarget:self action:@selector(refreshTweets)forControlEvents:UIControlEventValueChanged];
-    
-    #warning IOS 8.0 feature -- Untested on 7.0
-    //self.tableView.estimatedRowHeight = 120;
-    //self.tableView.rowHeight = UITableViewAutomaticDimension;
 }
 
+- (void)fetchTweets { }
 
 - (void)refreshTweets
 {
@@ -98,7 +95,7 @@
          CGFloat screenWidth = tableView.contentSize.width - 50.0f;
          
          CGFloat labelWidth = screenWidth - imageWidth - standardMargin*2.0;
-         CGFloat labelHeight = 2500.0f; // minimum height for label;
+         CGFloat labelHeight = 2500.0f; // max height for label;
          CGFloat nameLabelHeight = 25.0f;
          CGFloat extraPadding = 10.0f + 5.0f;
          CGFloat remainingHeight = nameLabelHeight + extraPadding + standardMargin*2.0;
@@ -127,7 +124,10 @@
         [ImageDownload downloadImageAsync:profileURL setImage:^(NSData *imageData) {
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                tweetCell.profileImage.image = [UIImage imageWithData:imageData];
+                NSIndexPath *path = [self.tableView indexPathForCell:tweetCell];
+                if([self.tableView.indexPathsForVisibleRows containsObject:path]) {
+                    tweetCell.profileImage.image = [UIImage imageWithData:imageData];
+                }
             });
             
             NSManagedObjectContext *backgroundMOC = [[NSManagedObjectContext alloc]
@@ -141,8 +141,11 @@
             }];
         }];
     }
-
-    tweetCell.profileImage.image = [UIImage imageWithData: user.profile_image];
+    else
+    {
+        tweetCell.profileImage.image = [UIImage imageWithData: user.profile_image];
+    }
+    
     tweetCell.nameLabel.text = user.name;
     
     NSString *twitterHandle = [@"@" stringByAppendingString:user.username];

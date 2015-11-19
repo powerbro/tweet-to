@@ -37,8 +37,8 @@
         _twitterAPI = [[TwitterFeed alloc] init];
     
     NSError *error;
-    BOOL success = [self.fetchedResultsController performFetch:&error];
-    //NSLog(@"%@", error);
+    [self.fetchedResultsController performFetch:&error];
+    //NSLog(@"Error in NFRC of user timeline : %@", error);
     [self fetchTweets];
     [self fetchUserDetailsForUsername:self.username];
 }
@@ -82,6 +82,13 @@
 {
     User *user = [User createUserWithUsername:username screenName:nil profileImageURL:nil inManagedObjectContext:self.managedObjectContext];
     
+    self.profileImageView.layer.borderWidth = 2.0;
+    self.profileImageView.layer.borderColor =  [[UIColor whiteColor] CGColor];
+
+    self.bannerImageView.layer.borderWidth = 1.0;
+    self.bannerImageView.layer.cornerRadius = 8.0;
+    self.bannerImageView.layer.borderColor =  [[UIColor blackColor] CGColor];
+    
     if (user.banner_image_url && user.image_url) {
         [self fetchBannerImageForUser:user];
         [self fetchProfileImageForUser:user];
@@ -89,7 +96,8 @@
     else
     {
         [self.twitterAPI getUserData:self.username withCompletionHandler:^(NSDictionary *userData) {
-            NSManagedObjectContext *backgroundMOC = [[NSManagedObjectContext alloc]initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+            NSManagedObjectContext *backgroundMOC = [[NSManagedObjectContext alloc]
+                                                     initWithConcurrencyType:NSPrivateQueueConcurrencyType];
             
             [backgroundMOC setParentContext:self.managedObjectContext];
             [backgroundMOC performBlock:^{
@@ -108,9 +116,6 @@
     NSString *profileString = [user.image_url stringByReplacingOccurrencesOfString:@"_normal" withString:@""];
     NSURL *profileURL = [NSURL URLWithString:profileString];
     
-    self.profileImageView.layer.borderWidth = 2.0;
-    self.profileImageView.layer.borderColor =  [[UIColor whiteColor] CGColor];
-    
     [ImageDownload downloadImageAsync:profileURL setImage:^(NSData *imageData) {
         dispatch_async(dispatch_get_main_queue(), ^{
             self.profileImageView.image = [UIImage imageWithData:imageData];
@@ -121,10 +126,6 @@
 
 - (void)fetchBannerImageForUser:(User *)user
 {
-    self.bannerImageView.layer.borderWidth = 1.0;
-    self.bannerImageView.layer.cornerRadius = 8.0;
-    self.bannerImageView.layer.borderColor =  [[UIColor blackColor] CGColor];
-    
     NSURL *bannerURL = [NSURL URLWithString:user.banner_image_url];
     
     [ImageDownload downloadImageAsync:bannerURL setImage:^(NSData *imageData) {
@@ -138,7 +139,6 @@
     }];
 }
 
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -147,15 +147,5 @@
 #pragma mark - Table view data source
 
 // from super class
-
-#pragma mark - Navigation
-
-/*
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

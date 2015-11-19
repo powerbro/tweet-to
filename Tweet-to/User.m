@@ -57,16 +57,22 @@
 + (User *)createFollowerForUser:(NSString *)myUsername withUsername:(NSString *)followerUsername withName:(NSString *)followerName
                    withImageURL:(NSString *)profileImageURL inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
 {
-    User *myself = [User createUserWithUsername:myUsername screenName:nil profileImageURL:nil inManagedObjectContext:managedObjectContext];
+    User *myself = [User createUserWithUsername:myUsername
+                                     screenName:nil
+                                profileImageURL:nil
+                         inManagedObjectContext:managedObjectContext];
     
-    User *follower = [User createUserWithUsername:followerUsername screenName:followerUsername profileImageURL:profileImageURL inManagedObjectContext:managedObjectContext];
+    User *follower = [User createUserWithUsername:followerUsername
+                                       screenName:followerUsername
+                                  profileImageURL:profileImageURL
+                           inManagedObjectContext:managedObjectContext];
+    
     if ([myself.followed_by containsObject:follower] == NO) {
         [myself addFollowed_byObject:follower];
     }
     
     NSError *error;
     [managedObjectContext save:&error];
-    
     return follower;
 }
 
@@ -74,7 +80,10 @@
 + (User *)loadUserDataFromUserDictionary:(NSDictionary *)userDictionary inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext
 {
     NSString *username = [userDictionary valueForKeyPath:USERNAME];
-    User *user = [User createUserWithUsername:username screenName:nil profileImageURL:nil inManagedObjectContext:managedObjectContext];
+    User *user = [User createUserWithUsername:username
+                                   screenName:nil
+                              profileImageURL:nil
+                       inManagedObjectContext:managedObjectContext];
     
     NSString *userID = [userDictionary valueForKeyPath:ID];
     NSString *screenName = [userDictionary valueForKeyPath:NAME];

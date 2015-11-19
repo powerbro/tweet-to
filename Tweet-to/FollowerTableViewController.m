@@ -33,7 +33,7 @@
     
     NSError *error;
     [self.fetchedResultsController performFetch:&error];
-    NSLog(@"Errors while fetching %@", error);
+    //NSLog(@"Errors in NFRC for followers: %@", error);
     [self fetchFollowers];
 }
 
@@ -41,7 +41,8 @@
 {
     [self.twitterAPI getFollowersList:self.myUsername withCompletionHandler:^(NSArray *followerList) {
         
-        NSManagedObjectContext *backgroundMOC = [[NSManagedObjectContext alloc]initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+        NSManagedObjectContext *backgroundMOC = [[NSManagedObjectContext alloc]
+                                                 initWithConcurrencyType:NSPrivateQueueConcurrencyType];
         [backgroundMOC setParentContext:self.managedObjectContext];
         [backgroundMOC performBlock:^{
             for (NSDictionary *followerDict in followerList) {
@@ -137,8 +138,11 @@
         [ImageDownload downloadImageAsync:profileURL setImage:^(NSData *imageData) {
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                followerCell.imageView.image = [UIImage imageWithData:imageData];
-                followerCell.imageView.alpha = 1.0;
+                NSIndexPath *path = [self.tableView indexPathForCell:followerCell];
+                if([self.tableView.indexPathsForVisibleRows containsObject:path]) {
+                    followerCell.imageView.image = [UIImage imageWithData:imageData];
+                    followerCell.imageView.alpha = 1.0;
+                }
             });
             
             NSManagedObjectContext *backgroundMOC = [[NSManagedObjectContext alloc]

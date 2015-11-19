@@ -113,7 +113,6 @@
         [randomString appendFormat:@"%C", [alphaNumericString characterAtIndex: randomIndex]];
     }
     return randomString;
-    //return @"kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg";
 }
 
 - (NSString *)oauthSignatureMethod
@@ -124,7 +123,6 @@
 - (NSString *)oauthTimestamp
 {
     return [NSString stringWithFormat:@"%lu", (unsigned long)[[NSDate date] timeIntervalSince1970]];
-    //return @"1318622958";
 }
 
 - (NSString *)oauthVersion
@@ -132,28 +130,15 @@
     return @"1.0";
 }
 
-//- (NSString *)oauthToken
-//{
-//    //return @"370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb";
-//    
-//}
-
-//- (NSString *)oauthTokenSecret
-//{
-//    //return @"LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE";
-//
-//}
 
 - (NSString *)oauthConsumerKey
 {
     return CONSUMER_KEY;
-    //return @"xvz1evFS4wEEPTGEFPHBog";
 }
 
 - (NSString *)oauthConsumerSecret
 {
     return CONSUMER_KEY_SECRET;
-    //return @"kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw";
 }
 
 - (NSString *)oauthSignature

@@ -19,7 +19,6 @@
     NSURLSessionDownloadTask *downloadTask = [session downloadTaskWithURL:imageURL completionHandler:^(NSURL * _Nullable location, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if(!error) {
             if([response.URL isEqual:request.URL]) {
-                //UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:location]];
                 NSData *imageData = [NSData dataWithContentsOfURL:location];
                 imageFetcher(imageData);
                 //NSLog(@"image response: %@", response);

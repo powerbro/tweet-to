@@ -12,8 +12,8 @@
 
 #warning Remove tokens from public repo
 
-#define CONSUMER_KEY         @"k7svAQ12zZPg7skA6Ib5p807Z"
-#define CONSUMER_KEY_SECRET  @"205VFNpGpdpiAHIR0fDJrX7yE5KV1RtmNCjOjAuL1tlOjuJWIa"
+#define CONSUMER_KEY         @"Bd4rrDnhdVloNMDLQDsRuZ2Of"
+#define CONSUMER_KEY_SECRET  @"ncqMMMt32AFH5w6wwccDUfHRwscmcbci7fWcN9fU5UslntmUof"
 
 @end
 

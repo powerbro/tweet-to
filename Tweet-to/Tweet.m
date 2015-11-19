@@ -16,15 +16,43 @@
 
 + (Tweet *)insertTweetFromDictionary:(NSDictionary *)tweetDictionary fromTimelineOfUser:(NSString *)myusername intoManagedObjectContext:(NSManagedObjectContext *)managedObjectContext
 {
-    Tweet *tweet = nil;
+    NSString *tweetID = [tweetDictionary valueForKeyPath:ID];
+    Tweet *tweet = [Tweet fetchTweetFromDBWithTweetID:tweetID withMOC:managedObjectContext];
     
-    NSString *tweetID         = [tweetDictionary valueForKeyPath:ID];
+    if (tweet) {
+        return tweet;
+    }
+    
     NSString *tweetCreatedAt  = [tweetDictionary valueForKeyPath:CREATED_AT];
     NSString *tweeterName       = [tweetDictionary valueForKeyPath:NAME];
     NSString *tweeterUsername   = [tweetDictionary valueForKeyPath:USERNAME];
     NSString *tweetText       = [tweetDictionary valueForKeyPath:TEXT];
     NSString *tweeterImageURL = [tweetDictionary valueForKeyPath:IMAGE_URL];
     
+    tweet = [NSEntityDescription insertNewObjectForEntityForName:@"Tweet" inManagedObjectContext:managedObjectContext];
+    tweet.tweet_id = tweetID;
+    tweet.text = tweetText;
+    tweet.created_at = tweetCreatedAt;
+    
+    //Create user in whose timeline tweet appears
+    User *me = [User createUserWithUsername:myusername
+                                 screenName:nil
+                            profileImageURL:nil
+                     inManagedObjectContext:managedObjectContext];
+    tweet.from_timeline = me;
+    
+    //Create user who wrote tweet
+    User *tweetCreator = [User createUserWithUsername:tweeterUsername
+                                           screenName:tweeterName
+                                      profileImageURL:tweeterImageURL
+                               inManagedObjectContext:managedObjectContext];
+    tweet.created_by = tweetCreator;
+    
+    return tweet;
+}
+
++ (Tweet *)fetchTweetFromDBWithTweetID:(NSString *)tweetID withMOC:(NSManagedObjectContext *)managedObjectContext
+{
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Tweet" inManagedObjectContext:managedObjectContext];
     [fetchRequest setEntity:entity];
@@ -37,26 +65,8 @@
     
     NSError *error = nil;
     NSArray *fetchedObjects = [managedObjectContext executeFetchRequest:fetchRequest error:&error];
-    if ([fetchedObjects count] == 0) {
-        tweet = [NSEntityDescription insertNewObjectForEntityForName:@"Tweet" inManagedObjectContext:managedObjectContext];
-        tweet.tweet_id = tweetID;
-        tweet.text = tweetText;
-        tweet.created_at = tweetCreatedAt;
-        
-        //Create user in whose timeline tweet appears
-        User *me = [User createUserWithUsername:myusername screenName:nil profileImageURL:nil inManagedObjectContext:managedObjectContext];
-        tweet.from_timeline = me;
-        
-        //Create user who wrote tweet
-        User *tweetCreator = [User createUserWithUsername:tweeterUsername screenName:tweeterName profileImageURL:tweeterImageURL inManagedObjectContext:managedObjectContext];
-        tweet.created_by = tweetCreator;
-        
-    }
-    else {
-        tweet = [fetchedObjects firstObject];
-    }
     
-    return tweet;
+    return [fetchedObjects firstObject];
 }
 
 + (void)loadTweetsFromTwitterArray:(NSArray *)tweets fromTimelineOfUser:(NSString *)myusername intoManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
@@ -65,7 +75,6 @@
         [Tweet insertTweetFromDictionary:tweet fromTimelineOfUser:myusername intoManagedObjectContext:managedObjectContext];
     }
 
-#warning save through background MOC
     NSError *error;
     [managedObjectContext save:&error];
 }
