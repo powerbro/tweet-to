@@ -134,17 +134,17 @@
         followerCell.imageView.alpha = 1.0;
     }
     else {
-        NSManagedObjectID *followerObjectID = follower.objectID;
         [ImageDownload downloadImageAsync:profileURL setImage:^(NSData *imageData) {
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                NSIndexPath *path = [self.tableView indexPathForCell:followerCell];
-                if([self.tableView.indexPathsForVisibleRows containsObject:path]) {
+                UITableViewCell *followerCell = [self.tableView cellForRowAtIndexPath:indexPath];
+                if(followerCell) {
                     followerCell.imageView.image = [UIImage imageWithData:imageData];
                     followerCell.imageView.alpha = 1.0;
                 }
             });
             
+            NSManagedObjectID *followerObjectID = follower.objectID;
             NSManagedObjectContext *backgroundMOC = [[NSManagedObjectContext alloc]
                                                      initWithConcurrencyType:NSPrivateQueueConcurrencyType];
             

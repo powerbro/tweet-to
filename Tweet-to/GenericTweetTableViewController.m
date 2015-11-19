@@ -124,8 +124,8 @@
         [ImageDownload downloadImageAsync:profileURL setImage:^(NSData *imageData) {
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                NSIndexPath *path = [self.tableView indexPathForCell:tweetCell];
-                if([self.tableView.indexPathsForVisibleRows containsObject:path]) {
+                TweetTableViewCell *tweetCell = [self.tableView cellForRowAtIndexPath:indexPath];
+                if(tweetCell) {
                     tweetCell.profileImage.image = [UIImage imageWithData:imageData];
                 }
             });
@@ -135,7 +135,6 @@
             [backgroundMOC setParentContext:self.managedObjectContext];
             [backgroundMOC performBlock:^{
                 User *updatedUser = (User *)[backgroundMOC objectWithID:userObjectID];
-                //Tweet *updatedTweet = (Tweet *)[backgroundMOC objectWithID:tweetObjectID];
                 
                 [updatedUser loadProfileImageWithData:imageData inManagedObjectContext:backgroundMOC];
             }];

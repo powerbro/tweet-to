@@ -9,5 +9,4 @@
 #import <UIKit/UIKit.h>
 
 @interface CreateTweetViewController : UIViewController <UITextViewDelegate>
-- (void) sendTweet;
 @end

@@ -136,19 +136,10 @@
     }
 }
 
-#warning Use encapsulation better : move code to source view controller
-
-- (IBAction)sendTweetAndReturnToHomeTimeline:(UIStoryboardSegue *)unwindSegue
-{
-    if([unwindSegue.sourceViewController isKindOfClass:[CreateTweetViewController class]]) {
-        CreateTweetViewController *tweetController = unwindSegue.sourceViewController;
-        [tweetController sendTweet];
-    }
-}
 
 - (IBAction)backToHomeTimleine:(UIStoryboardSegue *)unwindSegue
 {
-    NSLog(@"returned to home timline from %@", unwindSegue.sourceViewController);
+    NSLog(@"Returned to home timline from %@", unwindSegue.sourceViewController);
 }
 
 @end

@@ -32,15 +32,29 @@
     //self.sendTweetButton.action = @selector(sendTweet);
 }
 
-
-- (void) sendTweet
+- (IBAction)cancelTweetAndReturned:(id)sender
 {
+    NSUInteger homeTimelineIndex = 0;
+    self.tabBarController.selectedIndex = homeTimelineIndex;
+    NSLog(@"tweet cancelled");
+
+}
+
+- (IBAction)sendTweet:(id)sender
+{
+    NSUInteger homeTimelineIndex = 0;
     NSString *tweet = self.tweetTextView.text;
     
     TwitterFeed *twitterAPI = [[TwitterFeed alloc] init];
     [twitterAPI postTweet:tweet];
     
-    NSLog(@"Tweet log: %@", tweet);
+    [UIView transitionFromView:self.tabBarController.selectedViewController.view
+                        toView:[self.tabBarController.viewControllers objectAtIndex:homeTimelineIndex].view  duration:0.5f options:UIViewAnimationOptionTransitionCurlUp
+                    completion:^(BOOL finished) {
+                        self.tabBarController.selectedIndex = homeTimelineIndex;
+                        NSLog(@"Tweet log: %@", tweet);
+                    }];
+
 }
 
 - (void)viewWillAppear:(BOOL)animated
