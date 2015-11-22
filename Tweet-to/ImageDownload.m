@@ -10,7 +10,7 @@
 
 @implementation ImageDownload
 
-+ (void)downloadImageAsync:(NSURL *)imageURL setImage:(void(^)(NSData *)) imageFetcher
++ (void)downloadImageAsync:(NSURL *)imageURL setImage:(void(^)(NSData *)) imageFetcher;
 {
     NSURLRequest *request = [NSURLRequest requestWithURL:imageURL];
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];

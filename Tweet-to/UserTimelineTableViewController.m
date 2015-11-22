@@ -80,7 +80,9 @@
 
 - (void)fetchUserDetailsForUsername:(NSString *)username
 {
-    User *user = [User createUserWithUsername:username screenName:nil profileImageURL:nil inManagedObjectContext:self.managedObjectContext];
+    User *user = [User createUserWithUsername:username screenName:nil
+                              profileImageURL:nil
+                       inManagedObjectContext:self.managedObjectContext];
     
     self.profileImageView.layer.borderWidth = 2.0;
     self.profileImageView.layer.borderColor =  [[UIColor whiteColor] CGColor];

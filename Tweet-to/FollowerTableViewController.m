@@ -7,7 +7,6 @@
 //
 
 #import "FollowerTableViewController.h"
-#import "FollowingJsonParams.h"
 #import "ImageDownload.h"
 
 #import "TwitterFeed.h"
@@ -17,23 +16,27 @@
 
 @property (strong, nonatomic) NSString *myUsername;
 @property (strong, nonatomic) TwitterFeed *twitterAPI;
+@property (strong, nonatomic) NSCache *imageCache;
 @end
 
 @implementation FollowerTableViewController
 
-@synthesize fetchedResultsController = _fetchedResultsController;
-
 - (void)viewDidLoad
 {
+    [super viewDidLoad];
+
     if(!_twitterAPI)
         _twitterAPI = [[TwitterFeed alloc] init];
     self.myUsername = _twitterAPI.username;
     
-    [super viewDidLoad];
+    if(!_imageCache)
+        _imageCache = [[NSCache alloc] init];
+    _imageCache.name = @"profileImageCache";
     
     NSError *error;
     [self.fetchedResultsController performFetch:&error];
-    //NSLog(@"Errors in NFRC for followers: %@", error);
+    
+    NSLog(@"Errors in NFRC for followers: %@", error);
     [self fetchFollowers];
 }
 
@@ -45,13 +48,8 @@
                                                  initWithConcurrencyType:NSPrivateQueueConcurrencyType];
         [backgroundMOC setParentContext:self.managedObjectContext];
         [backgroundMOC performBlock:^{
-            for (NSDictionary *followerDict in followerList) {
-                [User createFollowerForUser:self.myUsername
-                               withUsername:[followerDict valueForKeyPath:USERNAME]
-                                   withName:[followerDict valueForKey:NAME]
-                               withImageURL:[followerDict valueForKey:IMAGE_URL]
-                     inManagedObjectContext:backgroundMOC];
-            }
+            [User loadFollowersFromFollowerArray:followerList forMe:self.myUsername
+                          inManagedObjectContext:backgroundMOC];
         }];
     }];
 }
@@ -69,7 +67,7 @@
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"ANY following.username == %@", self.myUsername];
     [fetchRequest setPredicate:predicate];
     // Specify how the fetched objects should be sorted
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"username"
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"name"
                                                                    ascending:YES];
     [fetchRequest setSortDescriptors:[NSArray arrayWithObjects:sortDescriptor, nil]];
     
@@ -84,6 +82,7 @@
 
 - (NSUInteger)countNodesInSection:(NSInteger)section
 {
+    NSLog(@"sections: %lu", [[self.fetchedResultsController sections] count]);
     if ([[self.fetchedResultsController sections] count] > 0) {
         id <NSFetchedResultsSectionInfo> sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:section];
         return [sectionInfo numberOfObjects];
@@ -110,6 +109,8 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     //NSUInteger nodeCount = [self countNodesInSection:indexPath.section];
+    NSLog(@"%@", indexPath);
+
     User *follower = [self.fetchedResultsController objectAtIndexPath:indexPath];
     if (!follower) {
         UITableViewCell *followerCell = [tableView dequeueReusableCellWithIdentifier:@"PlaceHolderCell" forIndexPath:indexPath];
@@ -117,6 +118,9 @@
     }
     
     UITableViewCell *followerCell = [tableView dequeueReusableCellWithIdentifier:@"followers" forIndexPath:indexPath];
+    
+    followerCell.imageView.image = [UIImage imageNamed:@"twitter-about.png"];
+    followerCell.imageView.alpha = 0.5;
     [self configureCell:followerCell atIndexPath:indexPath];
     
     return followerCell;
@@ -124,38 +128,36 @@
 
 - (void)configureCell:(UITableViewCell *)followerCell atIndexPath:(NSIndexPath *)indexPath
 {
+    NSLog(@"%lu", indexPath.row);
     User *follower = [self.fetchedResultsController objectAtIndexPath:indexPath];
     
     NSString *profileString = [follower.image_url stringByReplacingOccurrencesOfString:@"_normal" withString:@""];
     NSURL *profileURL = [NSURL URLWithString:profileString];
     
-    if (follower.profile_image) {
-        followerCell.imageView.image = [UIImage imageWithData:follower.profile_image];
+    UIImage *followerProfileImage = [self.imageCache objectForKey:profileString];
+
+    if (followerProfileImage) {
+        followerCell.imageView.image = followerProfileImage;
         followerCell.imageView.alpha = 1.0;
     }
     else {
+        //NSLog(@"Cache miss %@ %@", profileString, indexPath);
         [ImageDownload downloadImageAsync:profileURL setImage:^(NSData *imageData) {
-            
+            UIImage *image = [UIImage imageWithData:imageData];
+            [self.imageCache setObject:image forKey:profileString];
+
             dispatch_async(dispatch_get_main_queue(), ^{
                 UITableViewCell *followerCell = [self.tableView cellForRowAtIndexPath:indexPath];
                 if(followerCell) {
-                    followerCell.imageView.image = [UIImage imageWithData:imageData];
+                    //NSLog(@"Setting %@ %@", profileString, indexPath);
+
+                    followerCell.imageView.image = image;
                     followerCell.imageView.alpha = 1.0;
                 }
             });
-            
-            NSManagedObjectID *followerObjectID = follower.objectID;
-            NSManagedObjectContext *backgroundMOC = [[NSManagedObjectContext alloc]
-                                                     initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-            
-            [backgroundMOC setParentContext:self.managedObjectContext];
-            [backgroundMOC performBlock:^{
-                User *updatedFollower = (User *)[backgroundMOC objectWithID:followerObjectID];
-                [updatedFollower loadProfileImageWithData:imageData inManagedObjectContext:backgroundMOC];
-            }];
         }];
     }
-         
+
     followerCell.textLabel.text = follower.name;
     followerCell.detailTextLabel.text = [@"@" stringByAppendingString:follower.username];
 }

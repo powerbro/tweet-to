@@ -8,29 +8,11 @@
 
 #import "User.h"
 #import "UserJsonParams.h"
+#import "FollowingJsonParams.h"
 
 @implementation User
 
 // Insert code here to add functionality to your managed object subclass
-
-+ (User *)createUserWithUsername:(NSString *)tweeterUsername screenName:(nullable NSString *)tweeterName profileImageURL:(nullable NSString *)tweeterImageURL inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext
-{
-    User *user = [User userFromDBwithUsername:tweeterUsername inManagedObjectContext:managedObjectContext];
-    
-    if (user) {
-        if (!user.name) user.name = tweeterName;
-        if (!user.image_url) user.image_url = tweeterImageURL;
-        return user;
-    }
-    
-    user = [NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:managedObjectContext];
-    user.username = tweeterUsername;
-    user.name = tweeterName;
-    user.image_url = tweeterImageURL;
-    
-    return user;
-}
-
 
 + (User *)userFromDBwithUsername:(NSString *)username inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext
 {
@@ -54,28 +36,56 @@
     return [fetchedObjects firstObject];
 }
 
-+ (User *)createFollowerForUser:(NSString *)myUsername withUsername:(NSString *)followerUsername withName:(NSString *)followerName
++ (User *)createUserWithUsername:(NSString *)tweeterUsername screenName:(nullable NSString *)tweeterName profileImageURL:(nullable NSString *)tweeterImageURL inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext
+{
+    User *user = [User userFromDBwithUsername:tweeterUsername inManagedObjectContext:managedObjectContext];
+    
+    if (user) {
+        if (!user.name) user.name = tweeterName;
+        if (!user.image_url) user.image_url = tweeterImageURL;
+        return user;
+    }
+    
+    user = [NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:managedObjectContext];
+    user.username = tweeterUsername;
+    user.name = tweeterName;
+    user.image_url = tweeterImageURL;
+    
+    return user;
+}
+
+
+- (User *)createFollowerWithUsername:(NSString *)followerUsername withName:(NSString *)followerName
                    withImageURL:(NSString *)profileImageURL inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
+{
+    User *follower = [User createUserWithUsername:followerUsername
+                                       screenName:followerName
+                                  profileImageURL:profileImageURL
+                           inManagedObjectContext:managedObjectContext];
+    
+    if ([self.followed_by containsObject:follower] == NO) {
+        [self addFollowed_byObject:follower];
+    }
+    return follower;
+}
+
++ (void)loadFollowersFromFollowerArray:(NSArray *)followerList forMe:(NSString *)myUsername inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
 {
     User *myself = [User createUserWithUsername:myUsername
                                      screenName:nil
                                 profileImageURL:nil
                          inManagedObjectContext:managedObjectContext];
-    
-    User *follower = [User createUserWithUsername:followerUsername
-                                       screenName:followerUsername
-                                  profileImageURL:profileImageURL
-                           inManagedObjectContext:managedObjectContext];
-    
-    if ([myself.followed_by containsObject:follower] == NO) {
-        [myself addFollowed_byObject:follower];
+
+    for (NSDictionary *followerDict in followerList) {
+        [myself createFollowerWithUsername:[followerDict valueForKeyPath:FOLLOWER_USERNAME]
+                           withName:[followerDict valueForKey:FOLLOWER_NAME]
+                       withImageURL:[followerDict valueForKey:FOLLOWER_IMAGE_URL]
+             inManagedObjectContext:managedObjectContext];
     }
     
     NSError *error;
     [managedObjectContext save:&error];
-    return follower;
 }
-
 
 + (User *)loadUserDataFromUserDictionary:(NSDictionary *)userDictionary inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext
 {
@@ -109,7 +119,6 @@
         self.profile_image = imageData;
         NSError *error;
         [managedObjectContext save:&error];
-        //NSLog(@"%@", [error localizedDescription]);
     }
 }
 

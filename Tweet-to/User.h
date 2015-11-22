@@ -18,11 +18,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (User *)loadUserDataFromUserDictionary:(NSDictionary *)userDictionary inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
 
-+ (User *)createFollowerForUser:(NSString *)myUsername withUsername:(NSString *)followerUsername withName:(NSString *)followerName withImageURL:(NSString *)profileImageURL inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
++ (void)loadFollowersFromFollowerArray:(NSArray *)followerList forMe:(NSString *)myUsername inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
 
-- (void)loadProfileImageWithData:(NSData *)imageData inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
+//-----------
+// Possible to store image in DB for persistence
+//-----------
+// - (void)loadProfileImageWithData:(NSData *)imageData inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
 
-- (void)loadThumbnailProfileImageWithData:(NSData *)imageData inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
+// - (void)loadThumbnailProfileImageWithData:(NSData *)imageData inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
 
 
 @end

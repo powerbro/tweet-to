@@ -10,9 +10,9 @@
 
 @interface FollowingJsonParams : NSObject
 
-#define ID                  @"id_str"
-#define NAME                @"name"
-#define USERNAME            @"screen_name"
-#define IMAGE_URL           @"profile_image_url_https"
+#define FOLLOWER_ID                  @"id_str"
+#define FOLLOWER_NAME                @"name"
+#define FOLLOWER_USERNAME            @"screen_name"
+#define FOLLOWER_IMAGE_URL           @"profile_image_url_https"
 
 @end

@@ -37,7 +37,6 @@
     self.myUsername = _twitterAPI.username;
     NSLog(@"user %@", self.myUsername);
     
-    
 #warning Show alert and quit
     if (!self.myUsername) {
         NSLog(@"Connect to internet. Quitting ...");
@@ -132,6 +131,7 @@
             userController.screenName = tweetCell.nameLabel.text;
             userController.username = [tweetCell.twitterHandleLabel.text substringFromIndex:1];
             userController.managedObjectContext = self.managedObjectContext;
+            userController.imageCache = self.imageCache;
         }
     }
 }

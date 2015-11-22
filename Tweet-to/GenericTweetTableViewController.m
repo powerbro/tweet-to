@@ -7,6 +7,7 @@
 //
 
 #import "GenericTweetTableViewController.h"
+#import "TweetTableViewCell.h"
 #import "Tweet.h"
 #import "User.h"
 
@@ -27,6 +28,10 @@
     
     self.refreshControl = [[UIRefreshControl alloc] init];
     [self.refreshControl addTarget:self action:@selector(refreshTweets)forControlEvents:UIControlEventValueChanged];
+    
+    if(!_imageCache)
+        _imageCache = [[NSCache alloc] init];
+    _imageCache.name = @"profileImageCache";
 }
 
 - (void)fetchTweets { }
@@ -55,6 +60,7 @@
         return 1;
 }
 
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     Tweet *tweet = [self.fetchedResultsController objectAtIndexPath:indexPath];
@@ -63,86 +69,44 @@
         UITableViewCell *placeHolderCell = [tableView dequeueReusableCellWithIdentifier:@"PlaceHolderCell" forIndexPath:indexPath];
         return placeHolderCell;
     }
-    
     if (![tweet isKindOfClass:[Tweet class]])
         NSLog(@"Something went wrong while fetching results from core data");
         
     TweetTableViewCell *tweetCell = (TweetTableViewCell *)[tableView dequeueReusableCellWithIdentifier:@"HomeTimelineCell" forIndexPath:indexPath];
+    tweetCell.profileImage.image = nil;
     [self configureCell:tweetCell atIndexPath:indexPath];
     
     return tweetCell;
 }
 
 
-- (CGRect)rectForText:(NSString *)text usingFont:(UIFont *)font boundedBySize:(CGSize)maxSize
-{
-    NSAttributedString *attrString = [[NSAttributedString alloc] initWithString:text
-                                    attributes:@{ NSFontAttributeName:font}];
-    
-    return [attrString boundingRectWithSize:maxSize
-                                    options:NSStringDrawingUsesLineFragmentOrigin
-                                    context:nil];
-}
 
- - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
- {
-     Tweet *tweet = [self.fetchedResultsController objectAtIndexPath:indexPath];
-     if(tweet) {
-         NSString *tweetText = tweet.text;
-
-         CGFloat standardMargin = 5.0f;
-         CGFloat imageWidth = 48.0f;
-         CGFloat screenWidth = tableView.contentSize.width - 50.0f;
-         
-         CGFloat labelWidth = screenWidth - imageWidth - standardMargin*2.0;
-         CGFloat labelHeight = 2500.0f; // max height for label;
-         CGFloat nameLabelHeight = 25.0f;
-         CGFloat extraPadding = 10.0f + 5.0f;
-         CGFloat remainingHeight = nameLabelHeight + extraPadding + standardMargin*2.0;
-      
-         CGRect rec = [self rectForText:tweetText usingFont:[UIFont systemFontOfSize:14.0]
-                          boundedBySize:CGSizeMake(labelWidth, labelHeight)];
-         return rec.size.height + remainingHeight;
-     }
-    
-     return 120;
- }
-
-
-
-- (void)configureCell:(TweetTableViewCell *)tweetCell atIndexPath:(NSIndexPath *)indexPath {
-    
+- (void)configureCell:(TweetTableViewCell *)tweetCell atIndexPath:(NSIndexPath *)indexPath
+{    
     Tweet *tweet = [self.fetchedResultsController objectAtIndexPath:indexPath];
     User *user = tweet.created_by;
     
     NSString *profileString = [user.image_url stringByReplacingOccurrencesOfString:@"_normal" withString:@""];
     NSURL *profileURL = [NSURL URLWithString:profileString];
     
-    if (!user.profile_image) {
-        NSManagedObjectID *userObjectID = user.objectID;
-        
+    UIImage *userProfileImage = [self.imageCache objectForKey:profileString];
+    if (!userProfileImage) {
+        //NSLog(@"Cache miss %@", profileString);
         [ImageDownload downloadImageAsync:profileURL setImage:^(NSData *imageData) {
-            
             dispatch_async(dispatch_get_main_queue(), ^{
+                UIImage *image = [UIImage imageWithData: imageData];
+                [self.imageCache setObject:image forKey:profileString];
+                
                 TweetTableViewCell *tweetCell = [self.tableView cellForRowAtIndexPath:indexPath];
                 if(tweetCell) {
-                    tweetCell.profileImage.image = [UIImage imageWithData:imageData];
+                    tweetCell.profileImage.image = image;
                 }
             });
-            
-            NSManagedObjectContext *backgroundMOC = [[NSManagedObjectContext alloc]
-                                                     initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-            [backgroundMOC setParentContext:self.managedObjectContext];
-            [backgroundMOC performBlock:^{
-                User *updatedUser = (User *)[backgroundMOC objectWithID:userObjectID];
-                
-                [updatedUser loadProfileImageWithData:imageData inManagedObjectContext:backgroundMOC];
-            }];
         }];
     }
     else
     {
-        tweetCell.profileImage.image = [UIImage imageWithData: user.profile_image];
+        tweetCell.profileImage.image = userProfileImage;
     }
     
     tweetCell.nameLabel.text = user.name;
@@ -156,6 +120,44 @@
     tweetCell.tweetLabel.layer.masksToBounds = YES;
     tweetCell.tweetLabel.layer.cornerRadius = 8.0;
 }
+
+
+
+- (CGRect)rectForText:(NSString *)text usingFont:(UIFont *)font boundedBySize:(CGSize)maxSize
+{
+    NSAttributedString *attrString = [[NSAttributedString alloc] initWithString:text
+                                                                     attributes:@{ NSFontAttributeName:font}];
+    
+    return [attrString boundingRectWithSize:maxSize
+                                    options:NSStringDrawingUsesLineFragmentOrigin
+                                    context:nil];
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    Tweet *tweet = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    if(tweet) {
+        NSString *tweetText = tweet.text;
+        
+        CGFloat standardMargin = 5.0f;
+        CGFloat imageWidth = 48.0f;
+        CGFloat screenWidth = tableView.contentSize.width - 50.0f;
+        
+        CGFloat labelWidth = screenWidth - imageWidth - standardMargin*2.0;
+        CGFloat labelHeight = 2500.0f; // max height for label;
+        CGFloat nameLabelHeight = 25.0f;
+        CGFloat extraPadding = 10.0f + 5.0f;
+        CGFloat remainingHeight = nameLabelHeight + extraPadding + standardMargin*2.0;
+        
+        CGRect rec = [self rectForText:tweetText usingFont:[UIFont systemFontOfSize:14.0]
+                         boundedBySize:CGSizeMake(labelWidth, labelHeight)];
+        return rec.size.height + remainingHeight;
+    }
+    
+    return 120;
+}
+
+
 
 
 - (void)didReceiveMemoryWarning {

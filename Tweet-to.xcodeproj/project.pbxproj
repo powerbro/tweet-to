@@ -81,7 +81,7 @@
 		1E4849091BECCBB500E7A3DA /* FollowerTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FollowerTableViewController.h; sourceTree = "<group>"; };
 		1E48490A1BECCBB500E7A3DA /* FollowerTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FollowerTableViewController.m; sourceTree = "<group>"; };
 		1E48490E1BECFD6100E7A3DA /* FollowingJsonParams.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FollowingJsonParams.h; path = "Tweet-to/FollowingJsonParams.h"; sourceTree = "<group>"; };
-		1E4849111BEEA2CD00E7A3DA /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = User.h; path = "Tweet-to/User.h"; sourceTree = "<group>"; };
+		1E4849111BEEA2CD00E7A3DA /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = User.h; path = "Tweet-to/User.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		1E4849121BEEA2CD00E7A3DA /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = User.m; path = "Tweet-to/User.m"; sourceTree = "<group>"; };
 		1E4849151BEEA2CD00E7A3DA /* Tweet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tweet.h; path = "Tweet-to/Tweet.h"; sourceTree = "<group>"; };
 		1E4849161BEEA2CD00E7A3DA /* Tweet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Tweet.m; path = "Tweet-to/Tweet.m"; sourceTree = "<group>"; };
@@ -162,8 +162,6 @@
 				1E4849041BE8D98F00E7A3DA /* ConsumerTokens.h */,
 				1E3E6DB61BC40A8D00A98CCC /* AppDelegate.h */,
 				1E3E6DB71BC40A8D00A98CCC /* AppDelegate.m */,
-				1E48493B1BFA2AE700E7A3DA /* RootTabBarController.h */,
-				1E48493C1BFA2AE700E7A3DA /* RootTabBarController.m */,
 				1E3E6DE91BC4107200A98CCC /* Model */,
 				1E3E6E191BC5378000A98CCC /* Controller */,
 				1E3E6DC21BC40A8D00A98CCC /* Assets.xcassets */,
@@ -221,6 +219,8 @@
 		1E3E6E191BC5378000A98CCC /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				1E48493B1BFA2AE700E7A3DA /* RootTabBarController.h */,
+				1E48493C1BFA2AE700E7A3DA /* RootTabBarController.m */,
 				1E48493A1BF8D4B100E7A3DA /* Timelines */,
 				1E4849081BECCB5C00E7A3DA /* Follow */,
 				1E55730A1BDA814B00129DB8 /* Tweet */,
